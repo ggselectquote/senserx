@@ -1,7 +1,7 @@
 {
   "name": "sense-shelf",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "README.md",
   "license": "MIT",
   "private": true
 }
