@@ -1,0 +1,23 @@
+{
+  "name": "senserx",
+  "version": "0.0.1",
+  "description": "Monorepo for a SelectQuote Hackathon project: SenseRx.",
+  "main": "README.md",
+  "repository": "https://github.com/ggselectquote/senserx",
+  "author": "Andrew Pohl, Greg Gushard",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "frontend/*",
+    "backend/*"
+  ],
+  "scripts": {
+    "start:web": "yarn workspace web start",
+    "build:web": "yarn workspace web build",
+    "start:mobile": "yarn workspace mobile flutter:run",
+    "build:mobile": "yarn workspace mobile flutter:build",
+    "build:api": "yarn workspace api build",
+    "start:api": "yarn workspace api start",
+    "flash:firmware": "cd backend/sense-shelf && make flash"
+  }
+}

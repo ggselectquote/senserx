@@ -1,0 +1,1 @@
+enum OperationMode { checkin, checkout }

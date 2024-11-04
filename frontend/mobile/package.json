@@ -1,0 +1,15 @@
+{
+  "name": "mobile",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "flutter:help": "make -C senserx help",
+    "flutter:run": "make -C senserx run",
+    "flutter:build": "make -C senserx build",
+    "flutter:build-aab": "make -C senserx build-aab",
+    "flutter:clean": "make -C senserx clean",
+    "flutter:pub-get": "make -C senserx pub_get",
+    "flutter:analyze": "make -C senserx analyze",
+    "flutter:sideload": "make -C senserx sideload"
+  }
+}
