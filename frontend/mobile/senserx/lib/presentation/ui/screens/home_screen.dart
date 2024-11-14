@@ -1,14 +1,14 @@
   import 'dart:ui';
 
 import 'package:senserx/application/products/product_service.dart';
-import 'package:senserx/domain/models/product_details.dart';
+import 'package:senserx/domain/models/products/product_details.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
 import 'package:senserx/presentation/ui/components/common/display/body_wrapper.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
 import 'package:senserx/presentation/ui/components/common/notifications/senserx_snackbar.dart';
 import 'package:senserx/presentation/theme/app_theme.dart';
 import 'package:senserx/presentation/ui/dialogs/barcode_scanner_dialog.dart';
-import 'package:senserx/presentation/providers/mode_provider.dart';
+import 'package:senserx/presentation/providers/application/mode_provider.dart';
 import 'package:senserx/presentation/ui/screens/product_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

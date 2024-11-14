@@ -9,6 +9,9 @@ backend/sense-shelf/build/
 backend/sense-shelf/firmware/.pio/
 backend/*/node_modules/
 
+backend/*/cmake-build-debug
+backend/*/*.pem
+
 *.log
 *.pid
 *.seed

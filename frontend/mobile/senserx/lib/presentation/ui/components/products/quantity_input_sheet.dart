@@ -1,5 +1,5 @@
 import 'package:senserx/domain/enums/operation_mode.dart';
-import 'package:senserx/domain/models/checkout_checkin_details.dart';
+import 'package:senserx/domain/models/application/checkout_checkin_details.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/cancel_button.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
 import 'package:flutter/material.dart';

@@ -21,13 +21,19 @@ class CancelButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: Theme.of(context).colorScheme.secondary,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      )
     );
   }
 }

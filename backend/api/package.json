@@ -21,7 +21,8 @@
     "build": "yarn tsc",
     "lint": "yarn tslint -c tslint.json -p tsconfig.json",
     "lint:fix": "tslint -c tslint.json -p tsconfig.json --fix",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "docker:up": "docker compose -f ../docker-compose.yml build && docker compose -f ../docker-compose.yml up -d"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.3",
