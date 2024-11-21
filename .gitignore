@@ -10,7 +10,8 @@ backend/sense-shelf/firmware/.pio/
 backend/*/node_modules/
 
 backend/*/cmake-build-debug
-backend/*/*.pem
+backend/*/**/.pem
+backend/*/**/credentials.h
 
 *.log
 *.pid

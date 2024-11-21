@@ -3,22 +3,22 @@
 import 'package:flutter/material.dart';
 
 class FacilityLayoutIcons {
-  static Icon getTypeIcon(String type) {
+  static Icon getTypeIcon(String type, {double? size = 36}) {
     switch (type.toLowerCase()) {
       case 'floor':
-        return const Icon(Icons.layers, color: Colors.blue);
+        return Icon(Icons.layers, color: Colors.blue, size: size);
       case 'room':
-        return const Icon(Icons.meeting_room, color: Colors.green);
+        return Icon(Icons.room, color: Colors.green, size: size);
       case 'section':
-        return const Icon(Icons.category, color: Colors.purple);
+        return Icon(Icons.category, color: Colors.purple, size: size);
       case 'wall':
-        return const Icon(Icons.photo, color: Colors.brown);
+        return Icon(Icons.photo, color: Colors.brown, size: size);
       case 'wing':
-        return const Icon(Icons.account_box_outlined, color: Colors.orange);
+        return Icon(Icons.account_box_outlined, color: Colors.orange, size: size);
       case 'unit':
-        return const Icon(Icons.event_seat, color: Colors.red);
+        return Icon(Icons.event_seat, color: Colors.red, size: size);
       default:
-        return const Icon(Icons.build, color: Colors.grey);
+        return Icon(Icons.build, color: Colors.grey, size: size);
     }
   }
 }

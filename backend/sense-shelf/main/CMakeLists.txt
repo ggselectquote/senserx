@@ -4,7 +4,10 @@ idf_component_register(SRCS
         "components/NvsFlash/NvsFlash.c"
         "components/Definitions/Definitions.c"
         "components/Wifi/WiFi.c"
+        "components/Mqtt/Mqtt.c"
+        "components/FSR406/FSR406.c"
         REQUIRES
+        esp_adc
         driver
         esp_wifi
         lwip

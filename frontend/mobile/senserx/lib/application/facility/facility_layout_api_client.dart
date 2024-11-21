@@ -30,6 +30,7 @@ class FacilityLayoutApiClient {
             'Failed to load facility layout data: ${response.statusCode}');
       }
     } catch (e) {
+      print(e);
       throw Exception('Error fetching facility layout data: $e');
     }
   }
@@ -39,6 +40,7 @@ class FacilityLayoutApiClient {
       String facilityUid, String uid) async {
     final url = Uri.parse('$baseUrl/facilities/${facilityUid}/layouts/$uid');
 
+    print(url);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -49,6 +51,7 @@ class FacilityLayoutApiClient {
             'Failed to load facility layout data: ${response.statusCode}');
       }
     } catch (e) {
+      print(e);
       throw Exception('Error fetching facility layout data: $e');
     }
   }

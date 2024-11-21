@@ -4,6 +4,7 @@ class Definitions {
   static const String USER_ID = "uid";
   static const String LAST_SYNC_TIME = "last_sync_time";
   static const String APP_THEME = "app_theme";
+  static const String SHOULD_FETCH = "should_fetch";
 
   static const List<Map<String, String>> sharedPreferenceKeys = [
     {
@@ -17,6 +18,10 @@ class Definitions {
     {
       'key': LAST_SYNC_TIME,
       'description': 'Stores the timestamp of the last data synchronization',
+    },
+    {
+      'key': SHOULD_FETCH,
+      'description': 'The app should fetch for new content',
     },
     {
       'key': APP_THEME,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "781900009201",
+    "project_id": "senserx",
+    "storage_bucket": "senserx.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781900009201:android:652246ab0e8a5ecdcbe350",
+        "android_client_info": {
+          "package_name": "com.selectquote.senserx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKVIzuNMUi3AMb92wEmwInwWhkKp3HI9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

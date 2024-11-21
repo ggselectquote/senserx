@@ -12,6 +12,7 @@ class FacilityLayoutProvider with ChangeNotifier {
     _layouts = layouts;
     _isLoading = false;
     notifyListeners();
+    _layouts.forEach((layout) => print(layout.toString()));
   }
 
   void startLoading() {

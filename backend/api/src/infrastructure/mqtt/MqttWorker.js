@@ -6,7 +6,7 @@ const host = process.env.MQTT_SERVER_URL || 'localhost';
 const port = process.env.MQTT_SERVER_PORT || '1883';
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
 const connectUrl = `${protocol}://${host}:${port}`;
-const topic = 'senserx';
+const topic = 'shelves';
 
 const client = mqtt.connect(connectUrl, {
     clientId,

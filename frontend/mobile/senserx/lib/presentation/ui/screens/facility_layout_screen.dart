@@ -6,33 +6,126 @@ import 'package:senserx/domain/models/facility/facility_model.dart';
 import 'package:senserx/presentation/providers/facility/facility_layout_provider.dart';
 import 'package:senserx/presentation/providers/facility/facility_provider.dart';
 import 'package:senserx/presentation/theme/app_theme.dart';
+import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
 import 'package:senserx/presentation/ui/components/common/display/body_wrapper.dart';
+import 'package:senserx/presentation/ui/components/common/display/senserx_card.dart';
 import 'package:senserx/presentation/ui/components/common/notifications/senserx_snackbar.dart';
 import 'package:senserx/presentation/ui/components/facility/add_facility_layout_form.dart';
+import 'package:senserx/presentation/ui/components/facility/new_facility_layout_button.dart';
+import 'package:senserx/presentation/ui/components/facility/pair_shelf_button.dart';
 
 import '../../../application/core/facility_layout_icons.dart';
+import '../../providers/application/global_context_provider.dart';
+import '../components/wifi/wifi_floating_action_button.dart';
 
-class FacilityLayoutScreen extends StatelessWidget {
+class FacilityLayoutScreen extends StatefulWidget {
   final FacilityLayoutModel layout;
   final FacilityModel facility;
 
-  const FacilityLayoutScreen({Key? key, required this.layout, required this.facility}) : super(key: key);
+  const FacilityLayoutScreen({
+    Key? key,
+    required this.layout,
+    required this.facility,
+  }) : super(key: key);
+
+  @override
+  _FacilityLayoutScreenState createState() => _FacilityLayoutScreenState();
+}
+
+class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late FacilityLayoutModel currentLayout;
+  late FacilityProvider _facilityProvider;
+  late FacilityLayoutProvider _facilityLayoutProvider;
+  var totalLayouts = 0;
+  var totalShelves = 0;
+  FacilityLayoutService _facilityLayoutService = FacilityLayoutService();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _updateCurrentLayout();
+    _facilityLayoutProvider =
+        Provider.of<FacilityLayoutProvider>(context, listen: false);
+    _facilityProvider = Provider.of<FacilityProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GlobalContextProvider>(context, listen: false)
+          .updateCurrentView(FacilityLayoutScreen, id: widget.layout.uid);
+    });
+  }
+
+  @override
+  void didUpdateWidget(FacilityLayoutScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.layout != oldWidget.layout) {
+      _updateCurrentLayout();
+    }
+  }
+
+  void _updateCurrentLayout() {
+    final facilityLayoutProvider =
+        Provider.of<FacilityLayoutProvider>(context, listen: false);
+    currentLayout =
+        _findLayout(widget.layout.uid, facilityLayoutProvider.layouts) ??
+            widget.layout;
+    var response = _facilityLayoutService.countShelvesAndLayouts([currentLayout]);
+    totalLayouts = response[0]?['layouts'] ?? 0;
+    totalShelves = response[0]?['shelves'] ?? 0;
+  }
+
+  FacilityLayoutModel? _findLayout(
+      String uid, List<FacilityLayoutModel> layouts) {
+    for (var layout in layouts) {
+      if (layout.uid == uid) {
+        return layout;
+      }
+      if (layout.children != null && layout.children!.isNotEmpty) {
+        var found = _findLayout(uid, layout.children!);
+        if (found != null) {
+          return found;
+        }
+      }
+    }
+    return null;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   /// Builds a list tile for a child layout
-  Widget _buildChildLayoutTile(BuildContext context, FacilityLayoutModel childLayout) {
+  Widget _buildChildLayoutTile(
+      BuildContext context, FacilityLayoutModel childLayout) {
     return ListTile(
-      leading: FacilityLayoutIcons.getTypeIcon(childLayout.type),
-      title: Text(childLayout.name, style: AppTheme.themeData.textTheme.titleMedium),
-      subtitle: Text('Type: ${childLayout.type.toUpperCase()}', style: AppTheme.themeData.textTheme.bodySmall),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => FacilityLayoutScreen(layout: childLayout, facility: facility),
-          ),
-        );
-      }
-    );
+        leading: FacilityLayoutIcons.getTypeIcon(childLayout.type),
+        title: Text(childLayout.name,
+            style: AppTheme.themeData.textTheme.bodyLarge),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "(${childLayout.subLayouts?.length ?? 0}) layouts | (${childLayout.shelves?.length ?? 0}) shelves",
+              style: AppTheme.themeData.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+        onTap: () {
+          Navigator.of(context)
+              .push(
+            MaterialPageRoute(
+                builder: (context) => FacilityLayoutScreen(
+                    layout: childLayout, facility: widget.facility)),
+          )
+              .then((_) {
+            Provider.of<GlobalContextProvider>(context, listen: false)
+                .updateCurrentView(null);
+          });
+        });
   }
 
   Widget _trashButton(BuildContext context, String layoutId) {
@@ -43,7 +136,8 @@ class FacilityLayoutScreen extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Confirm Deletion'),
-              content: const Text('Are you sure you want to delete this layout?'),
+              content:
+                  const Text('Are you sure you want to delete this layout?'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Cancel'),
@@ -60,15 +154,18 @@ class FacilityLayoutScreen extends StatelessWidget {
 
         if (deleteConfirmed == true) {
           try {
-            await FacilityLayoutService().deleteFacilityLayout(facility.uid, layoutId);
-            Provider.of<FacilityLayoutProvider>(context, listen: false).removeLayout(layoutId);
+            await FacilityLayoutService()
+                .deleteFacilityLayout(widget.facility.uid, layoutId);
+            Provider.of<FacilityLayoutProvider>(context, listen: false)
+                .removeLayout(layoutId);
             SenseRxSnackbar(
               context: context,
               title: "Success",
               message: "Layout has been deleted",
               isError: false,
+              isSuccess: true,
             ).show();
-            if (layoutId == layout.uid) {
+            if (layoutId == widget.layout.uid) {
               Navigator.of(context).pop();
             }
           } catch (e) {
@@ -81,130 +178,103 @@ class FacilityLayoutScreen extends StatelessWidget {
           }
         }
       },
-      icon: const Icon(Icons.delete_forever, color: Colors.red),
-    );
-  }
-
-  Widget _addFacilityLayoutButton(BuildContext context, String facilityName, {String? layoutName}) {
-    return TextButton(
-      onPressed: () async {
-        await showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: AddFacilityLayoutForm(
-                    addingTo: layoutName ?? facilityName,
-                    facilityId: facility.uid,
-                    parentId: layout.uid,
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("New Layout", style: AppTheme.themeData.textTheme.displayMedium)],
-      ),
+      icon: const Icon(Icons.delete_forever, color: Colors.white, size: 32),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final facilityLayoutProvider = Provider.of<FacilityLayoutProvider>(context, listen: true);
-    final facilityProvider = Provider.of<FacilityProvider>(context, listen: false);
-
-    FacilityLayoutModel? currentLayout;
-    FacilityLayoutModel? findLayout(String uid, List<FacilityLayoutModel> layouts) {
-      for (var layout in layouts) {
-        if (layout.uid == uid) {
-          currentLayout = layout;
-          return layout;
-        }
-        if (layout.children != null && layout.children!.isNotEmpty) {
-          var found = findLayout(uid, layout.children!);
-          if (found != null) {
-            return found;
-          }
-        }
-      }
-      return null;
-    }
-
-    findLayout(layout.uid, facilityLayoutProvider.layouts);
-    currentLayout ??= layout;
     return BackgroundScaffold(
       appBar: AppBar(
         title: Text(currentLayout!.name),
+        actions: [_trashButton(context, currentLayout!.uid)],
       ),
       body: BodyWrapper(
+        paddingRight: 5,
+        paddingLeft: 5,
         child: Center(
-          child: Card(
-            elevation: 8,
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            color: Colors.white.withOpacity(0.75),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      FacilityLayoutIcons.getTypeIcon(currentLayout!.type),
-                      const SizedBox(width: 16),
-                      Text(
-                        currentLayout!.name,
-                        style: AppTheme.themeData.textTheme.displayMedium,
-                      ),
-                      const Spacer(),
-                      _trashButton(context, currentLayout!.uid)
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Type: ${currentLayout!.type.toUpperCase()}',
-                    style: AppTheme.themeData.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    currentLayout!.description ?? 'No description provided',
-                    style: AppTheme.themeData.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Children: ${currentLayout!.children?.length ?? 0}',
-                    style: AppTheme.themeData.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: currentLayout!.children?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return _buildChildLayoutTile(
-                          context,
-                          facilityLayoutProvider.layouts.firstWhere(
-                                (element) => element.uid == currentLayout!.children![index].uid,
-                            orElse: () => currentLayout!.children![index],
-                          ),
-                        );
-                      },
+          child: SenseRxCard(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.center,
+                child: OverflowBar(
+                  spacing: 8,
+                  overflowAlignment: OverflowBarAlignment.end,
+                  children: <Widget>[
+                    NewFacilityLayoutButton(
+                        facility: widget.facility, layout: widget.layout),
+                    PairShelfButton(
+                      facilityId: _facilityProvider.facility!.uid.toString(),
+                      facilityLayoutId: widget.layout.uid.toString(),
                     ),
-                  ),
-                  _addFacilityLayoutButton(context, facilityProvider.facility!.name, layoutName: currentLayout!.name),
-                ],
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Column(
+                  children: [
+                    TabBar(
+                      controller: _tabController,
+                      tabs: [
+                        Tab(
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                              Text(
+                                  '(${currentLayout?.children?.length ?? 0})',
+                                  style: AppTheme.themeData.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w700, fontSize: 20)),
+                              const SizedBox(width: 8),
+                              Text('Layouts',
+                                  style:
+                                      AppTheme.themeData.textTheme.bodyMedium?.copyWith(fontSize: 20)),
+                            ])),
+                        Tab(
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                              Text('(${currentLayout?.shelves?.length ?? 0})',
+                                  style: AppTheme.themeData.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w700, fontSize: 20)),
+                              const SizedBox(width: 8),
+                              Text('Shelves',
+                                  style:
+                                      AppTheme.themeData.textTheme.bodyMedium?.copyWith(fontSize: 20))
+                            ])),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          ListView.builder(
+                            itemCount: currentLayout!.children?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              return _buildChildLayoutTile(
+                                context,
+                                _facilityLayoutProvider.layouts.firstWhere(
+                                  (element) =>
+                                      element.uid ==
+                                      currentLayout!.children![index].uid,
+                                  orElse: () => currentLayout!.children![index],
+                                ),
+                              );
+                            },
+                          ),
+                          // Add your Shelves tab content here
+                          Container(), // Placeholder for Shelves tab
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

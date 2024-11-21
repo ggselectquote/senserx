@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:senserx/application/facility/facility_layout_service.dart';
 import 'package:senserx/application/facility/facility_service.dart';
@@ -7,35 +10,39 @@ import 'package:senserx/domain/models/facility/facility_model.dart';
 import 'package:senserx/presentation/providers/facility/facility_layout_provider.dart';
 import 'package:senserx/presentation/providers/facility/facility_provider.dart';
 import 'package:senserx/presentation/theme/app_theme.dart';
+import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
 import 'package:senserx/presentation/ui/components/common/display/body_wrapper.dart';
+import 'package:senserx/presentation/ui/components/common/display/senserx_card.dart';
 import 'package:senserx/presentation/ui/components/facility/add_facility_layout_form.dart';
 import 'package:senserx/presentation/ui/screens/facility_layout_screen.dart';
 
-class FacilityScreen extends StatelessWidget {
-  const FacilityScreen({Key? key, required this.title}) : super(key: key);
+import '../components/facility/new_facility_layout_button.dart';
+import '../components/facility/pair_shelf_button.dart';
+import '../components/wifi/wifi_floating_action_button.dart';
 
+class FacilityScreen extends StatelessWidget {
+  const FacilityScreen({Key? key, required this.title, this.facilityId}) : super(key: key);
+
+  final String? facilityId;
   final String title;
 
   @override
   Widget build(BuildContext context) {
-    final facilityLayoutProvider = Provider.of<FacilityLayoutProvider>(
-        context, listen: false);
-    final facilityProvider = Provider.of<FacilityProvider>(
-        context, listen: false);
+    final facilityLayoutProvider =
+        Provider.of<FacilityLayoutProvider>(context, listen: false);
+    final facilityProvider =
+        Provider.of<FacilityProvider>(context, listen: false);
     final facilityService = FacilityService();
     final facilityLayoutService = FacilityLayoutService();
-    String facilityId = "e3168780-d504-4fbc-9916-f216621644db";
-
-    facilityLayoutProvider.startLoading();
-    facilityProvider.startLoading();
+    String _facilityId = facilityId ?? dotenv.env['FACILITY_ID'] ?? "";
 
     Future.delayed(Duration.zero, () async {
       try {
-        FacilityModel facility = await facilityService.getFacilityDetails(
-            facilityId);
+        FacilityModel facility =
+            await facilityService.getFacilityDetails(_facilityId);
         List<FacilityLayoutModel> layouts = await facilityLayoutService
-            .listFacilityLayoutsByFacilityUid(facilityId);
+            .listFacilityLayoutsByFacilityUid(_facilityId);
         facilityProvider.setFacility(facility);
         facilityLayoutProvider.setLayouts(layouts);
       } catch (e) {
@@ -48,134 +55,117 @@ class FacilityScreen extends StatelessWidget {
         title: Text(title),
       ),
       body: BodyWrapper(
+        paddingLeft: 5,
+        paddingRight: 5,
         child: Consumer<FacilityLayoutProvider>(
           builder: (context, provider, child) {
             if (provider.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (provider.layouts.isEmpty || facilityProvider.facility == null) {
-              return const Center(child: Text("No layout data available."));
-            }
             return Column(
               children: [
+                // Facility Card
+                SenseRxCard(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.business,
+                            color: AppTheme.themeData.primaryColor),
+                        const SizedBox(width: 16),
+                        Text(
+                          facilityProvider.facility!.name,
+                          style: AppTheme.themeData.textTheme.displayMedium,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Contact: ${facilityProvider.facility!.contact ?? "N/A"}',
+                      style: AppTheme.themeData.textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      facilityProvider.facility!.address ??
+                          'No address provided',
+                      style: AppTheme.themeData.textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Layouts: ${facilityLayoutProvider.layouts.length}',
+                      style: AppTheme.themeData.textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: AlignmentDirectional.center,
+                      child: OverflowBar(
+                        spacing: 8,
+                        overflowAlignment: OverflowBarAlignment.end,
+                        children: <Widget>[
+                          NewFacilityLayoutButton(
+                              facility: facilityProvider.facility!,
+                              layout: null
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: provider.layouts.length,
+                    itemCount: facilityLayoutProvider.layouts.length,
                     itemBuilder: (context, index) {
-                      final layout = provider.layouts[index];
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Card(
-                          elevation: 8,
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          child: ListTile(
-                            leading: _getTypeIcon(layout.type),
-                            title: Text(
-                              layout.name,
-                              style: AppTheme.themeData.textTheme.titleLarge,
-                            ),
-                            subtitle: Text(
-                              "Type: ${layout.type.toUpperCase()} | (${layout
-                                  .children?.length ?? 0}) children",
-                              style: AppTheme.themeData.textTheme.displaySmall,
-                            ),
-                            trailing: const Icon(
-                                Icons.arrow_forward_ios, size: 16),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FacilityLayoutScreen(layout: layout,
-                                          facility: facilityProvider.facility!),
-                                ),
-                              );
-                            },
+                      final layout = facilityLayoutProvider.layouts[index];
+                      return SenseRxCard(
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                          children: [
+                        ListTile(
+                          shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                      );
+                          leading:
+                              FacilityService.getFacilityLayoutType(layout.type)
+                                  .icon,
+                          title: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              layout.name,
+                              style: AppTheme.themeData.textTheme.bodyLarge,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "(${layout.children?.length ?? 0}) layouts | (${layout.shelves?.length  ?? 0}) shelves",
+                                style:
+                                    AppTheme.themeData.textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                          trailing:
+                              const Icon(Icons.arrow_forward_ios, size: 24),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => FacilityLayoutScreen(
+                                  layout: layout,
+                                  facility: facilityProvider.facility!,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      ]);
                     },
                   ),
                 ),
-                _addFacilityLayoutButton(context, facilityId, facilityProvider.facility!.name)
               ],
             );
           },
         ),
       ),
     );
-  }
-
-  Widget _addFacilityLayoutButton(BuildContext context, String facilityId, String facilityName) {
-    return TextButton(
-      onPressed: () async {
-        final result = await showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: AddFacilityLayoutForm(
-                    addingTo: facilityName,
-                    facilityId: facilityId,
-                    parentId: null,
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("New Layout", style: AppTheme.themeData.textTheme.displayMedium),
-        ],
-      ),
-    );
-  }
-
-  Icon _getTypeIcon(String type) {
-    switch (type.toLowerCase()) {
-      case 'floor':
-        return const Icon(Icons.layers, color: Colors.blue);
-      case 'room':
-        return const Icon(Icons.meeting_room, color: Colors.green);
-      case 'section':
-        return const Icon(Icons.category, color: Colors.purple);
-      case 'wall':
-        return const Icon(Icons.photo, color: Colors.brown);
-      case 'wing':
-        return const Icon(Icons.airplanemode_active, color: Colors.orange);
-      case 'unit':
-        return const Icon(Icons.house, color: Colors.red);
-      default:
-        return const Icon(Icons.build, color: Colors.grey);
-    }
-  }
-
-  Color _getColorByType(String type) {
-    switch (type.toLowerCase()) {
-      case 'floor':
-        return Colors.blue;
-      case 'room':
-        return Colors.green;
-      case 'section':
-        return Colors.purple;
-      case 'wall':
-        return Colors.brown;
-      case 'wing':
-        return Colors.orange;
-      case 'unit':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
   }
 }

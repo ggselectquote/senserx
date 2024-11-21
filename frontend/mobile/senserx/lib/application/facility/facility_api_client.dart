@@ -27,6 +27,25 @@ class FacilityApiClient {
   }
 
   ///
+  /// Gets Facility Layouts by UID
+  ///
+  Future<String> getFacilityLayoutsByUid(String uid) async {
+    final url = Uri.parse('$baseUrl/facilities/$uid/layouts');
+
+    print(url);
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception('Failed to load facility data: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching facility data: $e');
+    }
+  }
+
+  ///
   /// Creates a Facility
   ///
   Future<String> createFacility(FacilityModel facility) async {

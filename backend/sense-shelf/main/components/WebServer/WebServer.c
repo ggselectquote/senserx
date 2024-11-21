@@ -15,7 +15,7 @@
 #include "../Definitions/Definitions.h"
 
 static const char *TAG = "HTTPS_SERVER";
-static const char *ERRORMSG = "Invalud WiFi SSID or password";
+static const char *ERRORMSG = "Invalid provisioning request";
 static const char *GENERICERRORMSG = "Failed to process request";
 
 /**
@@ -41,14 +41,17 @@ static esp_err_t provision_post_handler(httpd_req_t *req)
 
     cJSON *ssidJSON = cJSON_GetObjectItemCaseSensitive(root, "ssid");
     cJSON *passwordJSON = cJSON_GetObjectItemCaseSensitive(root, "password");
+    cJSON *deviceNameJSON = cJSON_GetObjectItemCaseSensitive(root, "deviceName");
+    cJSON *facilityIdJSON = cJSON_GetObjectItemCaseSensitive(root, "facilityId");
+    cJSON *facilityLayoutIdJSON = cJSON_GetObjectItemCaseSensitive(root, "facilityLayoutId");
 
-    if (ssidJSON == NULL || passwordJSON == NULL) {
+    if (ssidJSON == NULL || passwordJSON == NULL || facilityIdJSON == NULL || facilityLayoutIdJSON == NULL || deviceNameJSON == NULL) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, ERRORMSG);
         cJSON_Delete(root);
         return ESP_OK;
     }
 
-    if (!cJSON_IsString(ssidJSON) || !cJSON_IsString(passwordJSON)) {
+    if (!cJSON_IsString(ssidJSON) || !cJSON_IsString(passwordJSON) || !cJSON_IsString(facilityIdJSON) || !cJSON_IsString(facilityLayoutIdJSON) || !cJSON_IsString(deviceNameJSON)) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, ERRORMSG);
         cJSON_Delete(root);
         return ESP_OK;
@@ -56,8 +59,17 @@ static esp_err_t provision_post_handler(httpd_req_t *req)
 
     const char *ssid = ssidJSON->valuestring;
     const char *password = passwordJSON->valuestring;
+    const char *deviceName = deviceNameJSON->valuestring;
+    const char *facilityId = facilityIdJSON->valuestring;
+    const char *facilityLayoutId = facilityLayoutIdJSON->valuestring;
 
-    if (strlen(ssid) == 0 || strlen(password) == 0) {
+    if (strlen(ssid) == 0 || strlen(password) == 0 || strlen(facilityId) == 0 || strlen(facilityLayoutId) == 0 || strlen(deviceName) == 0) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, ERRORMSG);
+        cJSON_Delete(root);
+        return ESP_OK;
+    }
+
+    if (strlen(facilityId) > 36 || strlen(facilityLayoutId) > 36 || strlen(deviceName) > 32) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, ERRORMSG);
         cJSON_Delete(root);
         return ESP_OK;
@@ -68,11 +80,34 @@ static esp_err_t provision_post_handler(httpd_req_t *req)
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to save SSID to NVS");
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, GENERICERRORMSG);
+        return ESP_OK;
     }
     err = save_str(WIFI, PW, password);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to save Password to NVS");
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, GENERICERRORMSG);
+        return ESP_OK;
+    }
+    err = save_str(LOCATION, DEVICE_NAME, deviceName);
+       ESP_LOGI(TAG, "Saved Device Name %s", deviceName);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to save device name to NVS");
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, GENERICERRORMSG);
+        return ESP_OK;
+    }
+    err = save_str(LOCATION, FACILITY_ID, facilityId);
+       ESP_LOGI(TAG, "Saved Facility Id %s", facilityId);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to save facility to NVS");
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, GENERICERRORMSG);
+        return ESP_OK;
+    }
+    err = save_str(LOCATION, FACILITY_LAYOUT_ID, facilityLayoutId);
+    ESP_LOGI(TAG, "Saved Facility Layout Id %s", facilityLayoutId);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to save facility layout to NVS");
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, GENERICERRORMSG);
+        return ESP_OK;
     }
 
     char resp_str[] = "OK";
@@ -84,7 +119,6 @@ static esp_err_t provision_post_handler(httpd_req_t *req)
         .message = "reboot"
     };
 
-    // Send the message to the taskQueue
     if (xQueueSend(taskQueue, &msg, 0) != pdTRUE) {
         ESP_LOGE(TAG, "Failed to send reboot message to taskQueue");
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to initiate reboot");
@@ -107,7 +141,7 @@ httpd_uri_t provision = {
 /**
  * Starts the HTTPS Server
  */
-void start_https_server(void *pvParameters)
+void start_https_task(void *pvParameters)
 {
     ESP_LOGI(TAG, "Starting HTTPS Server");
     httpd_handle_t server = NULL;

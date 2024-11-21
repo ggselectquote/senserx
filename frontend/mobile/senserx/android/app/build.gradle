@@ -1,5 +1,8 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
@@ -7,19 +10,22 @@ plugins {
 
 android {
     namespace = "com.selectquote.senserx"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34//flutter.compileSdkVersion
     // modified for shared_preferences https://github.com/flutter/flutter/issues/156304
     ndkVersion "25.1.8937393"
 
     // modified for shared_preferences https://github.com/flutter/flutter/issues/156304
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     // modified for shared_preferences https://github.com/flutter/flutter/issues/156304
     kotlinOptions {
-        jvmTarget = 17
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     /**
@@ -43,6 +49,7 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
+        multiDexEnabled true
         versionName = flutter.versionName
     }
 
@@ -51,7 +58,12 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            crunchPngs false
         }
+    }
+
+    dependencies {
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
     }
 }
 

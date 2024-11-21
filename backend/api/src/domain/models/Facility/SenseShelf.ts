@@ -13,7 +13,10 @@ export const shelfSchema = z.object({
     capacity: z.number().optional(),
     currentUtilization: z.number().optional(),
     productTypes: z.array(z.string()).optional(),
-    lastSeen: z.string().optional()
+    lastSeen: z.string().optional(),
+    currentMeasure: z.number().optional(),
+    lastReadMeasure: z.number().optional(),
+    delta: z.number().optional()
 });
 
 /**
@@ -31,7 +34,10 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
     capacity?: number;
     currentUtilization?: number;
     productTypes?: string[];
-    lastSeen?: string;
+    lastSeen?: number;
+    currentMeasure?: number;
+    lastReadMeasure?: number;
+    delta?: number;
 
     /**
      * @param data - The Shelf data to initialize the model with
@@ -45,7 +51,10 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
         this.capacity = data.capacity;
         this.currentUtilization = data.currentUtilization;
         this.productTypes = data.productTypes;
-        this.lastSeen = data.lastSeen ?? new Date().toISOString()
+        this.lastSeen = Math.floor(Date.now() / 1000);
+        this.currentMeasure = data.currentMeasure;
+        this.lastReadMeasure = data.lastReadMeasure;
+        this.delta = data.delta;
     }
 
     /**
@@ -59,10 +68,10 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
                 macAddress: { type: 'string', indexed: true },
                 layoutId: { type: 'string', indexed: true },
                 facilityId: { type: 'string', indexed: true },
-                capacity: { type: 'number' },
-                currentUtilization: { type: 'number' },
-                productTypes: { type: 'string[]' },
-                lastSeen: { type: 'string' }
+                lastSeen: { type: 'number', indexed: true  },
+                currentMeasure: { type: 'number' },
+                lastReadMeasure: { type: 'number' },
+                delta: { type: 'number' },
             }
         );
     }

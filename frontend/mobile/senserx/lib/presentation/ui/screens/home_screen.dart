@@ -1,10 +1,11 @@
-  import 'dart:ui';
+import 'dart:ui';
 
 import 'package:senserx/application/products/product_service.dart';
 import 'package:senserx/domain/models/products/product_details.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
 import 'package:senserx/presentation/ui/components/common/display/body_wrapper.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
+import 'package:senserx/presentation/ui/components/common/display/senserx_card.dart';
 import 'package:senserx/presentation/ui/components/common/notifications/senserx_snackbar.dart';
 import 'package:senserx/presentation/theme/app_theme.dart';
 import 'package:senserx/presentation/ui/dialogs/barcode_scanner_dialog.dart';
@@ -53,11 +54,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _scanAndFetchProductDetails() async {
-    setState(() {
-      isScanning = true;
-    });
     try {
+      setState(() {
+        isScanning = true;
+      });
       String? barcode = await BarcodeScannerDialog.scan(context);
+      setState(() {
+        isScanning = false;
+      });
       if (barcode != null) {
         final productDetails = await _productService.getProductDetails(barcode);
         final product = parseSearchResults(productDetails);
@@ -80,6 +84,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         );
       }
     } catch (e, s) {
+      setState(() {
+        isScanning = false;
+      });
       SenseRxSnackbar(
               context: context,
               title: "Error",
@@ -87,10 +94,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               isError: true)
           .show();
       rethrow;
-    } finally {
-      setState(() {
-        isScanning = false;
-      });
     }
   }
 
@@ -248,49 +251,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 icon: const Icon(Icons.settings, size: 32))
           ],
         ),
-      body: BodyWrapper(
-        child: Center(
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            color: Colors.white.withOpacity(0.75),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Consumer<ModeProvider>(
-                        builder: (context, modeProvider, child) {
-                          return Text(
-                            modeProvider.isCheckinMode ? "CHECKIN" : "CHECKOUT",
-                            style: AppTheme.themeData.textTheme.displayLarge,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 30),
-                      Consumer<ModeProvider>(
-                        builder: (context, modeProvider, child) {
-                          return _buildLargeSwitch(modeProvider);
-                        },
-                      ),
-                      const SizedBox(height: 75),
-                      PrimaryButton(
-                          text: "Scan Bottle",
-                          isLoading: isScanning,
-                          onPressed: _scanAndFetchProductDetails
-                      )
-                    ],
-                  ),
+        body: BodyWrapper(
+            child: Center(
+          child: SenseRxCard(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Consumer<ModeProvider>(
+                builder: (context, modeProvider, child) {
+                  return Text(
+                    modeProvider.isCheckinMode ? "CHECKIN" : "CHECKOUT",
+                    style: AppTheme.themeData.textTheme.displayLarge,
+                  );
+                },
               ),
-            ),
+              const SizedBox(height: 30),
+              Consumer<ModeProvider>(
+                builder: (context, modeProvider, child) {
+                  return _buildLargeSwitch(modeProvider);
+                },
+              ),
+              const SizedBox(height: 75),
+              PrimaryButton(
+                  text: "Scan Bottle",
+                  isLoading: isScanning,
+                  onPressed: _scanAndFetchProductDetails)
+            ],
           ),
-        ),
-      ),
-    );
+        )));
   }
 }

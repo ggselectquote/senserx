@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:senserx/application/core/device_utilities.dart';
+import 'package:senserx/presentation/ui/components/common/display/senserx_card.dart';
+
+import '../../theme/app_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -42,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           const Text(
-            "Test",
+            "Test User",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],
@@ -51,53 +55,29 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildMenuSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(
-            'Account',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Text(
+          'Account',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: ListTile(
-            leading: const Icon(Icons.exit_to_app, color: Colors.red),
-            title: const Text('Sign Out'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // Implement sign out logic here
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Sign Out'),
-                    content: const Text('Are you sure you want to sign out?'),
-                    actions: [
-                      TextButton(
-                        child: const Text('Cancel'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      TextButton(
-                        child: const Text('Sign Out'),
-                        onPressed: () {
-                          // Implement actual sign out logic here
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Signed out successfully')),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    );
+      ),
+      SenseRxCard(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ListTile(
+                leading: const Icon(Icons.settings_input_antenna,
+                    color: Colors.green),
+                title: Text('WiFi Settings',
+                    style: AppTheme.themeData.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w500)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  DeviceUtilities.openWifiSettings();
+                }),
+          ])
+    ]);
   }
 }

@@ -4,9 +4,15 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-#define WIFI "WifiNamespace"
+#define WIFI "WifiNS"
 #define SSID "WifiSsid"
 #define PW "WifiPw"
+
+
+#define LOCATION "LocNS"
+#define FACILITY_ID "Fac"
+#define FACILITY_LAYOUT_ID "Lay"
+#define DEVICE_NAME "Dev"
 
 #define MSG_REBOOT "reboot"
 #define MSG_WIFI_CONNECTED "wifi_connected"
@@ -21,12 +27,11 @@ typedef struct {
     const char *message;
 } TaskMessage;
 
-
 typedef struct {
     double readingTime;
-    int readingMeasure;
+    float readingMeasure;
+    double delta;
 } SignalMessage;
-
 
 extern QueueHandle_t taskQueue;
 extern QueueHandle_t signalQueue;
