@@ -45,7 +45,7 @@ function connect() {
     });
 
     client.on('message', (topic, payload) => {
-        log(`Received message on topic '${topic}': ${payload.toString()}`);
+        //log(`Received message on topic '${topic}': ${payload.toString()}`);
         if (parentPort) {
             parentPort.postMessage({ type: 'message', topic, message: payload.toString() });
         }

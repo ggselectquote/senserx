@@ -48,7 +48,7 @@ export class SenseShelvesController {
                 capacity,
                 currentUtilization,
                 productTypes,
-                lastSeen: new Date().toISOString(),
+                lastSeen: Math.floor(Date.now() / 1000)
             });
             newShelf.validate(newShelf);
             await this.shelfRepository.save(newShelf.macAddress, newShelf);

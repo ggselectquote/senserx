@@ -22,6 +22,26 @@ export class FacilityLayoutsController {
     }
 
     /**
+     * Create a check-inb record
+     * @param req
+     * @param res
+     * @param next
+     */
+    public checkin = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+        return;
+    }
+
+    /**
+     * Create a check-out record
+     * @param req
+     * @param res
+     * @param next
+     */
+    public checkout = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
+        return;
+    }
+
+    /**
      * Creates a new layout or sub-layout
      * @param req
      * @param res

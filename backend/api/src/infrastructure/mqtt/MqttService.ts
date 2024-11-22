@@ -1,6 +1,6 @@
 // mqtt/MqttService.ts
-import { RedisService } from '../../application/services/RedisService';
-import { Worker } from 'worker_threads';
+import {RedisService} from '../../application/services/RedisService';
+import {Worker} from 'worker_threads';
 import path from 'path';
 import {Channels} from "../../domain/enums/Channels";
 import {SenseShelf, SenseShelfModel} from "../../domain/models/Facility/SenseShelf";
@@ -65,17 +65,24 @@ export class MqttService {
                         macAddress: json.deviceId,
                         layoutId: json.facilityLayoutId,
                         facilityId: json.facilityId,
-                        lastSeen: new Date().toISOString()
+                        lastSeen: Math.floor(Date.now() / 1000),
+                        delta: json.delta,
+                        currentMeasure: json.readMeasure,
                     };
                     const key = shelfData.macAddress;
                     const existingShelf = await this.redisService.senseShelfRepository?.fetch(key);
+                    shelfData.lastReadMeasure = existingShelf?.currentMeasure || existingShelf?.lastReadMeasure || 0;
                     if (!existingShelf?.name) {
                         const devices = await this.fetchMobileDevicesByFacilityId(shelfData.facilityId);
                         if (devices.length > 0) {
                             const notificationEvent = new NotificationEvent(
                                 "New Shelf Online",
                                 `A new shelf named ${shelfData.name} has come online at your facility.`,
-                                { shelfId: shelfData.macAddress, facilityLayoutId: shelfData.layoutId, facilityId: shelfData.facilityId  }
+                                {
+                                        shelfId: shelfData.macAddress,
+                                        facilityLayoutId: shelfData.layoutId,
+                                        facilityId: shelfData.facilityId
+                                    }
                             );
                             await this.firebaseMessaging.sendNotification(
                                 devices.map(device => device.fcmToken),
@@ -83,9 +90,13 @@ export class MqttService {
                             );
                         }
                     }
+                    if (shelfData?.delta) {
+                        shelfData.currentMeasure = json.readMeasure;
+                        const devices = await this.fetchMobileDevicesByFacilityId(shelfData.facilityId);
+
+                    }
                     const newShelf = new SenseShelfModel(shelfData);
                     await this.redisService.senseShelfRepository?.save(newShelf.macAddress, newShelf);
-                    console.log('Shelf saved successfully');
                 } catch (error) {
                     console.error('Failed to save shelf:', error);
                 }

@@ -6,7 +6,7 @@ class SenseShelfModel {
   final int? capacity;
   final int? currentUtilization;
   final List<String>? productTypes;
-  final String lastSeen;
+  final String? lastSeen;
 
   SenseShelfModel({
     required this.name,
@@ -16,7 +16,7 @@ class SenseShelfModel {
     this.capacity,
     this.currentUtilization,
     this.productTypes,
-    required this.lastSeen,
+    this.lastSeen,
   });
 
   factory SenseShelfModel.fromJson(Map<String, dynamic> json) {
@@ -27,8 +27,13 @@ class SenseShelfModel {
       facilityId: json['facilityId'] as String,
       capacity: json['capacity'] as int?,
       currentUtilization: json['currentUtilization'] as int?,
-      productTypes: json['productTypes'] != null ? List<String>.from(json['productTypes']) : null,
-      lastSeen: json['lastSeen'] ?? DateTime.now().toIso8601String(),
+      productTypes: json['productTypes'] != null
+          ? List<String>.from(json['productTypes'])
+          : null,
+      lastSeen: json['lastSeen'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['lastSeen'])
+              .toIso8601String()
+          : null
     );
   }
 
@@ -45,5 +50,14 @@ class SenseShelfModel {
     };
   }
 
-  List<Object?> get props => [name, macAddress, layoutId, facilityId, capacity, currentUtilization, productTypes, lastSeen];
+  List<Object?> get props => [
+        name,
+        macAddress,
+        layoutId,
+        facilityId,
+        capacity,
+        currentUtilization,
+        productTypes,
+        lastSeen
+      ];
 }
