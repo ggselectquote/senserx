@@ -1,20 +1,44 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import Login from './pages/Login';
-import DashboardPage from './pages/DashboardPage';
-import { AuthProvider } from './services/AuthService';
-import './styles/App.scss';
+//import { AuthProvider } from './services/AuthService';
+import './styles/index.css';
+import Dashboard from './pages/Dashboard';
+
+// const router = createBrowserRouter([
+// 	{
+// 		// element: <PrivateRoutes />,
+// 		// children: [
+// 		// 	{
+// 				element: <AppWrapper />,
+// 				children: [
+// 					{
+// 						path: `/login`,
+// 						element: <Login />,
+// 					},
+// 					{
+// 						path: `/dashboard`,
+// 						element: <Dashboard />,
+// 					},
+// 					{
+// 						path: '*',
+// 						element: <Navigate to={`/login`} replace />,
+// 					},
+// 				],
+// 		// 	},
+// 		// ],
+// 	},
+// 	{
+// 		path: '/login',
+// 		element: <Login />,
+// 	},
+// ]);
+
+// createRoot(document.getElementById('root')!).render(
+//     <Dashboard />
+// );
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
-                <Switch>
-                    <Route path="/login" component={Login} />
-                    <PrivateRoute path="/dashboard" component={DashboardPage} />
-                    <Redirect from="/" to="/login" />
-                </Switch>
-            </Router>
-        </AuthProvider>
+        <Dashboard />
     );
 }
+export default App;

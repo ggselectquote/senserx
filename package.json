@@ -19,5 +19,8 @@
     "build:api": "yarn workspace api build",
     "start:api": "yarn workspace api start",
     "flash:firmware": "cd backend/sense-shelf && make flash"
+  },
+  "dependencies": {
+    "react-scripts": "^5.0.1"
   }
 }
