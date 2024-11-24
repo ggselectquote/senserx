@@ -1,5 +1,4 @@
 export enum Channels {
     SHELVES = 'shelves',
-    RECEIVES = 'receives',
-    DISPENSES = 'dispenses'
+    FIREBASE_MESSAGING = 'firebase/messaging'
 }

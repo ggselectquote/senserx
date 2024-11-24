@@ -5,6 +5,7 @@ import {Facility, FacilityModel} from "../../domain/models/Facility/Facility";
 import {FacilityLayout, FacilityLayoutModel} from "../../domain/models/Facility/FacilityLayout";
 import {SenseShelf, SenseShelfModel} from "../../domain/models/Facility/SenseShelf";
 import {MobileDevice, MobileDeviceModel} from "../../domain/models/MobileDevice/MobileDevice";
+import {InventoryEvent, InventoryEventModel} from "../../domain/models/Facility/InventoryEvent";
 
 export class RedisService {
     private static _instance: RedisService;
@@ -15,6 +16,7 @@ export class RedisService {
     public facilityLayoutRepository?: Repository<FacilityLayout>;
     public senseShelfRepository?: Repository<SenseShelf>
     public mobileDeviceRepository?: Repository<MobileDevice>
+    public inventoryEventRepository?: Repository<InventoryEvent>;
 
     /**
      * @constructs RedisService
@@ -36,6 +38,19 @@ export class RedisService {
     }
 
     /**
+     * Removes the expiration from a key
+     * @param key
+     */
+    async persist(key: string): Promise<boolean> {
+        try {
+            return await this.client.persist(key);
+        } catch (error) {
+            console.error("Error persisting key in Redis", key);
+            throw error;
+        }
+    }
+
+    /**
      * init redis and repos
      */
     async init() {
@@ -46,12 +61,15 @@ export class RedisService {
             this.facilityLayoutRepository = new Repository(FacilityLayoutModel.schema(), this.client) as Repository<FacilityLayout>;
             this.senseShelfRepository = new Repository(SenseShelfModel.schema(), this.client) as Repository<SenseShelf>;
             this.mobileDeviceRepository = new Repository(MobileDeviceModel.schema(), this.client) as Repository<MobileDevice>;
+            this.inventoryEventRepository = new Repository(InventoryEventModel.schema(), this.client) as Repository<InventoryEvent>;
+
 
             await this.productDetailRepository.createIndex();
             await this.facilityRepository.createIndex();
             await this.facilityLayoutRepository.createIndex();
             await this.senseShelfRepository.createIndex();
             await this.mobileDeviceRepository.createIndex();
+            await this.inventoryEventRepository.createIndex();
         } catch (error) {
             throw error;
         }
@@ -66,7 +84,8 @@ export class RedisService {
             this.facilityRepository !== undefined &&
             this.facilityLayoutRepository !== undefined &&
             this.senseShelfRepository !== undefined &&
-            this.mobileDeviceRepository !== undefined
+            this.mobileDeviceRepository !== undefined &&
+            this.inventoryEventRepository !== undefined
         );
     }
 

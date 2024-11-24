@@ -1,3 +1,4 @@
+import 'package:senserx/domain/enums/operation_mode.dart';
 import 'package:senserx/domain/models/application/checkout_checkin_details.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
@@ -47,7 +48,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                   border: TableBorder.all(
                                       color: Colors.grey.shade300),
                                   children: [
-                                    _buildTableRow('NDC', product.asin),
+                                    _buildTableRow('NDC', product.upc),
                                     _buildTableRow('Brand', product.brand),
                                     _buildTableRow(
                                         'Weight', '${product.weight}/unit'),
@@ -56,8 +57,8 @@ class ProductDetailsScreen extends StatelessWidget {
                                 const SizedBox(height: 40),
                                 PrimaryButton(
                                   text: modeProvider.isCheckinMode
-                                      ? "CHECKIN"
-                                      : "CHECKOUT",
+                                      ? "RECEIVE"
+                                      : "DISPENSE",
                                   onPressed: () => _showQuantityInputSheet(
                                       context, modeProvider),
                                   textColor: Colors.white,
@@ -76,8 +77,8 @@ class ProductDetailsScreen extends StatelessWidget {
                   top: 16,
                   left: 16,
                   child: IconButton(
-                    icon:
-                        const Icon(Icons.close, color: Colors.white, size: 30),
+                    icon: Icon(Icons.close,
+                        color: AppTheme.themeData.primaryColor, size: 30),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -136,10 +137,12 @@ class ProductDetailsScreen extends StatelessWidget {
                     const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: QuantityInputSheet(
-                operationMode: modeProvider.currentMode,
+                operationMode: modeProvider.isCheckinMode
+                    ? OperationMode.checkin
+                    : OperationMode.checkout,
                 scrollController: controller,
                 defaultQuantity: 1000,
-                ndc: product.asin,
+                upc: product.upc,
               ),
             );
           },
@@ -152,8 +155,8 @@ class ProductDetailsScreen extends StatelessWidget {
           durationInSeconds: 5,
           context: context,
           title:
-              "${modeProvider.isCheckinMode ? "Checkin" : "Checkout"} Confirmed",
-          message: "${value.ndc} - ${value.quantity} qty.",
+              modeProvider.isCheckinMode ? "Receive Started" : "Dispense Confirmed",
+          message: "${value.upc} - ${value.quantity} qty.  ${modeProvider.isCheckinMode ? "Place your item on a shelf to complete the receiving process." : ""}",
           isSuccess: true,
         ).show();
       }

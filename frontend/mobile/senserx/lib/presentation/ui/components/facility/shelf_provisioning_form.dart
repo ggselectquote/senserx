@@ -113,7 +113,7 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
         if (response.statusCode == 200) {
           context
               .read<SnackbarProvider>()
-              .showSnackbar("Provisioning started.", isSuccess: true);
+              .showSnackbar("WiFi provisioning started.", isSuccess: true, title: "Success");
         } else {
           context.read<SnackbarProvider>().showSnackbar(
               "Provisioning failed. Please try again",
@@ -148,14 +148,14 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.wifi, size: 40, color: Colors.blue),
+                Icon(Icons.wifi, size: 40, color: AppTheme.themeData.primaryColor),
                 const SizedBox(width: 10),
                 Text(
                   'SenseRx Shelf',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
+                    color: AppTheme.themeData.primaryColor,
                   ),
                 ),
               ],

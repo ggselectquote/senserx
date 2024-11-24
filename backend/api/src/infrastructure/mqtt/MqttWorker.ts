@@ -1,11 +1,12 @@
 import { parentPort } from 'worker_threads';
 import mqtt, {MqttClient} from 'mqtt';
+import {Channels} from "../../domain/enums/Channels";
 
 const host = process.env.MQTT_SERVER_URL || 'localhost';
 const port = process.env.MQTT_SERVER_PORT || '1883';
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
 const connectUrl = `mqtt://${host}:${port}`;
-const topic = 'shelves';
+
 
 let client: MqttClient;
 let reconnectAttempts = 0;
@@ -35,11 +36,11 @@ function connect() {
         log(`Connected to MQTT broker: ${connectUrl}`);
         reconnectAttempts = 0;
 
-        client.subscribe([topic], (err) => {
+        client.subscribe([Channels.SHELVES, Channels.FIREBASE_MESSAGING + "/#"], (err) => {
             if (err) {
-                log(`Failed to subscribe to topic '${topic}': ${err.message}`, 'error');
+                log(`Failed to subscribe to topics: ${err.message}`, 'error');
             } else {
-                log(`Subscribed to topic '${topic}'`);
+                log(`Subscribed to topics`);
             }
         });
     });

@@ -10,9 +10,8 @@ export const shelfSchema = z.object({
     macAddress: z.string(),
     layoutId: z.string(),
     facilityId: z.string(),
-    capacity: z.number().optional(),
-    currentUtilization: z.number().optional(),
-    productTypes: z.array(z.string()).optional(),
+    currentUpc: z.string().optional(),
+    currentQuantity: z.number().optional(),
     lastSeen: z.number().optional(),
     currentMeasure: z.number().optional(),
     lastReadMeasure: z.number().optional(),
@@ -31,9 +30,8 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
     macAddress: string;
     layoutId: string;
     facilityId: string;
-    capacity?: number;
-    currentUtilization?: number;
-    productTypes?: string[];
+    currentUpc?: string;
+    currentQuantity?: number;
     lastSeen?: number;
     currentMeasure?: number;
     lastReadMeasure?: number;
@@ -48,9 +46,8 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
         this.macAddress = data.macAddress;
         this.layoutId = data.layoutId;
         this.facilityId = data.facilityId;
-        this.capacity = data.capacity;
-        this.currentUtilization = data.currentUtilization;
-        this.productTypes = data.productTypes;
+        this.currentUpc = data.currentUpc;
+        this.currentQuantity = data.currentQuantity;
         this.lastSeen = Math.floor(Date.now() / 1000); // stamp as now
         this.currentMeasure = data.currentMeasure;
         this.lastReadMeasure = data.lastReadMeasure;
@@ -71,6 +68,8 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
                 lastSeen: { type: 'number', indexed: true  }, // unix timestamp so we can index this field
                 currentMeasure: { type: 'number' },
                 lastReadMeasure: { type: 'number' },
+                currentUpc: { type: 'string' },
+                currentQuantity: { type: 'number' },
                 delta: { type: 'number' },
             }
         );

@@ -2,19 +2,19 @@ import 'package:senserx/domain/enums/operation_mode.dart';
 
 class CheckoutCheckinDetails {
   final double quantity;
-  final String ndc;
+  final String upc;
   final OperationMode mode;
 
   CheckoutCheckinDetails({
     required this.quantity,
-    required this.ndc,
+    required this.upc,
     required this.mode,
   });
 
   factory CheckoutCheckinDetails.fromJson(Map<String, dynamic> json) {
     return CheckoutCheckinDetails(
       quantity: json['quantity'] ?? 0.0,
-      ndc: json['ndc'],
+      upc: json['upc'],
       mode: json['mode']
     );
   }
@@ -24,7 +24,7 @@ class CheckoutCheckinDetails {
     return '''
     CheckoutCheckinDetails {
       quantity: $quantity,
-      ndc: $ndc,
+      upc: $upc,
       mode: $mode
     ''';
   }

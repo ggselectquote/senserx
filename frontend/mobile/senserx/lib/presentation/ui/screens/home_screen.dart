@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Consumer<ModeProvider>(
                 builder: (context, modeProvider, child) {
                   return Text(
-                    modeProvider.isCheckinMode ? "CHECKIN" : "CHECKOUT",
+                    modeProvider.isCheckinMode ? "RECEIVE" : "DISPENSE",
                     style: AppTheme.themeData.textTheme.displayLarge,
                   );
                 },

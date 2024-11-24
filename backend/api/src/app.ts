@@ -9,6 +9,7 @@ import {FacilityLayoutsController} from "./application/http/controllers/Faciliti
 import {SenseShelvesController} from "./application/http/controllers/Facilities/SenseShelvesController";
 import {MqttService} from "./infrastructure/mqtt/MqttService";
 import {MobileDevicesController} from "./application/http/controllers/MobileDevices/MobileDevicesController";
+import {InventoryEventsController} from "./application/http/controllers/Facilities/InventoryEventsController";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ interface BootAppResult {
     productDetailsController: ProductDetailsController;
     layoutController: FacilityLayoutsController;
     senseShelvesController: SenseShelvesController;
+    mobileDevicesController: MobileDevicesController;
+    inventoryEventsController: InventoryEventsController
 }
 
 
@@ -33,11 +36,16 @@ async function bootApp(): Promise<BootAppResult> {
         await redisService.init();
 
         // controllers
-        const mobileDevicesController = new MobileDevicesController(
-            redisService.mobileDeviceRepository!
-        );
         const facilitiesController = new FacilitiesController(
             redisService.facilityRepository!
+        );
+        const inventoryEventsController = new InventoryEventsController(
+            redisService.inventoryEventRepository!,
+            redisService.senseShelfRepository!,
+            redisService
+        );
+        const mobileDevicesController = new MobileDevicesController(
+            redisService.mobileDeviceRepository!
         );
         const productDetailsController = new ProductDetailsController(
             redisService.productDetailRepository!
@@ -56,9 +64,8 @@ async function bootApp(): Promise<BootAppResult> {
         app.use(bodyParser.json())
 
         // routes
-
-        // products
-        app.get('/products/:upc', productDetailsController.getProductById);
+        app.post('/inventory-events', inventoryEventsController.create);
+        app.put('/inventory-events/confirm-dispense', inventoryEventsController.updateLatestUnconfirmedCheckout)
 
         // mobile devices
         app.post('/mobile-devices', mobileDevicesController.create);
@@ -86,6 +93,9 @@ async function bootApp(): Promise<BootAppResult> {
         app.put('/facilities/:facilityId/layouts/:layoutId/shelves/:macAddress', senseShelvesController.update);
         app.delete('/facilities/:facilityId/layouts/:layoutId/shelves/:macAddress', senseShelvesController.delete);
 
+        // products
+        app.get('/products/:upc', productDetailsController.getProductById);
+
         // app
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
@@ -95,7 +105,9 @@ async function bootApp(): Promise<BootAppResult> {
             facilitiesController,
             senseShelvesController,
             layoutController,
-            productDetailsController
+            productDetailsController,
+            mobileDevicesController,
+            inventoryEventsController,
         };
     } catch (error) {
         console.error('Failed to initialize Redis service:', error);
