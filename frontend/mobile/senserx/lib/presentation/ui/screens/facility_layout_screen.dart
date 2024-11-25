@@ -111,10 +111,13 @@ class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return SingleChildScrollView(
-              child: BodyWrapper(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+            return  Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
                   child: ShelfProvisioningForm(
                       shelf: shelf, initialLayoutId: shelf.layoutId),
                 ),
@@ -129,7 +132,7 @@ class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLastSeenTime(shelf),
-          Text('IP: ${shelf.ipAddress ?? 'N/A'}'),
+          _buildNetwork(shelf)
         ],
       ),
       trailing: _buildProductInfo(shelf),
@@ -169,6 +172,17 @@ class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
         const Icon(Icons.access_time, size: 16),
         const SizedBox(width: 4),
         Text(DateFormat('MMM d, h:mm a').format(lastSeenTime)),
+      ],
+    );
+  }
+
+  Widget _buildNetwork(SenseShelfModel shelf) {
+    if (shelf.ipAddress == null) return const SizedBox.shrink();
+    return Row(
+      children: [
+        const Icon(Icons.wifi, size: 16),
+        const SizedBox(width: 4),
+        Text(shelf.ipAddress.toString()),
       ],
     );
   }
@@ -250,7 +264,7 @@ class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
                       .removeLayout(layout.uid);
 
                   if (layout.parentId != null && layout.parentId!.isNotEmpty) {
-                    Navigator.of(context).pushAndRemoveUntil(
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (context) => FacilityLayoutScreen(
                           layout: _facilityLayoutProvider
@@ -258,16 +272,14 @@ class _FacilityLayoutScreenState extends State<FacilityLayoutScreen>
                           facility: widget.facility,
                         ),
                       ),
-                      (route) => false,
                     );
                   } else {
-                    Navigator.of(context).pushAndRemoveUntil(
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (context) => FacilityScreen(
                             facilityId: widget.facility.uid,
                             title: widget.facility.name),
                       ),
-                      (route) => false,
                     );
                   }
                   SenseRxSnackbar(

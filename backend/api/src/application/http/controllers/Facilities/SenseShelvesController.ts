@@ -23,7 +23,7 @@ export class SenseShelvesController {
     public create = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
         try {
             const { facilityId, layoutId } = req.params;
-            const { name, macAddress, capacity, currentUtilization, productTypes } = req.body;
+            const { name, macAddress, productTypes, currentUpc } = req.body;
             const layout = await this.layoutRepository.fetch(layoutId);
             const existingDevice = await this.shelfRepository.fetch(macAddress);
             if(existingDevice.macAddress) {
@@ -44,9 +44,8 @@ export class SenseShelvesController {
                 name,
                 macAddress,
                 layoutId,
+                currentUpc,
                 facilityId: layout.facilityId,
-                capacity,
-                currentUtilization,
                 productTypes,
                 lastSeen: Math.floor(Date.now() / 1000)
             });

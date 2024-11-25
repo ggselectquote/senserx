@@ -143,13 +143,10 @@ export class MqttService {
                 console.error('Failed to save shelf:', error);
             }
         } else if (msg.topic.includes(Channels.FIREBASE_MESSAGING)) {
-            console.log(`Incoming msg on Firebase channel ${msg.topic}`)
             const facilityId = msg.topic.split('/')[2];
-            console.log(`Facility is ${facilityId}`)
             const json = JSON.parse(msg.message);
             const devices = await this.fetchMobileDevicesByFacilityId(facilityId);
             const notificationEvent = NotificationEvent.fromJson(json);
-            console.log(notificationEvent)
             await this.firebaseMessaging.sendNotification(
                 devices.map(device => device.fcmToken),
                 notificationEvent
@@ -186,8 +183,6 @@ export class MqttService {
     async handleFallingEdge(shelfData: SenseShelf) {
         const inventoryEventRepository = this.redisService.inventoryEventRepository;
         const senseShelfRepository = this.redisService.senseShelfRepository;
-        console.log("Handle falling edge")
-        console.log(shelfData)
         if (!shelfData.currentUpc || !shelfData.currentQuantity) return; // ignore a checkout event without a product UPC
         const eventId = randomUUID();
         const checkOutEvent =  InventoryEventModel.toModel({
@@ -201,9 +196,11 @@ export class MqttService {
             timestamp: Math.floor(Date.now() / 1000),
             uid: eventId
         })
-        
+
         await inventoryEventRepository?.save(eventId, checkOutEvent);
         await inventoryEventRepository?.expire(eventId, 1200);
+
+
         return checkOutEvent;
     }
 

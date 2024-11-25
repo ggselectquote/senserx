@@ -79,6 +79,47 @@ export class InventoryEventsController {
     }
 
     /**
+     * Gets inventory events
+     * @param req
+     * @param res
+     */
+    public getInventoryEvents = async (req: express.Request, res: express.Response): Promise<void> => {
+        try {
+            const { facilityId, shelfId,
+                facilityLayoutId, page = 1,
+                limit = 20 } = req.query;
+            const offset = (Number(page) - 1) * Number(limit);
+
+            let query = this.inventoryEventRepository.search();
+
+            if (facilityId) {
+                query = query.where('facilityId').equals(facilityId as string);
+            }
+            if (shelfId) {
+                query = query.where('shelfId').equals(shelfId as string);
+            }
+            if (facilityLayoutId) {
+                query = query.where('facilityLayoutId').equals(facilityLayoutId as string);
+            }
+
+            const totalCount = await query.return.count();
+            const events = await query
+                .sortBy('timestamp', 'DESC')
+                .return.page(Number(offset), Number(limit));
+
+            res.status(200).json({
+                events,
+                currentPage: Number(page),
+                totalPages: Math.ceil(totalCount / Number(limit)),
+                totalCount
+            });
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    /**
      * Updates the most recent unconfirmed checkout event at a facility
      * @param req
      * @param res
@@ -109,6 +150,9 @@ export class InventoryEventsController {
                     `Dispensed ${upc} from ${senseShelf.name}, qty. ${latestUnconfirmedCheckout.quantity}.`,
                     { facilityId, upc, quantity: quantity.toString(), shelfId, facilityLayoutId }
                 );
+                senseShelf.currentUpc = undefined;
+                senseShelf.currentQuantity = undefined;
+                await this.senseShelfRepository.save(shelfId, senseShelf);
                 this.mqttClient.publish(Channels.FIREBASE_MESSAGING + `/${facilityId}`, JSON.stringify(notificationEvent))
                 return
             } else {
