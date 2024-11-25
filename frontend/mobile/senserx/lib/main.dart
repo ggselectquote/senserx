@@ -6,6 +6,7 @@ import 'package:senserx/application/facility/facility_layout_service.dart';
 import 'package:senserx/application/facility/facility_service.dart';
 import 'package:senserx/application/mobile_devices/mobile_device_service.dart';
 import 'package:senserx/application/overrides/senserx_http_overrides.dart';
+import 'package:senserx/domain/models/facility/facility_model.dart';
 import 'package:senserx/infrastructure/notifications/NotificationHandler.dart';
 import 'package:senserx/infrastructure/permissions/permissions_handler.dart';
 import 'package:senserx/infrastructure/wifi/wifi_monitor.dart';
@@ -29,6 +30,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'domain/models/facility/facility_layout_model.dart';
 import 'infrastructure/navigation/global_navigation_observer.dart';
 
 void main() async {
@@ -73,6 +75,8 @@ class _SenseRxAppState extends State<SenseRxApp> {
       GlobalKey<ScaffoldMessengerState>();
   late FirebaseMessaging _firebaseMessaging;
   final navigatorKey = GlobalKey<NavigatorState>();
+  final FacilityService _facilityService = FacilityService();
+  final FacilityLayoutService facilityLayoutService = FacilityLayoutService();
 
   @override
   void initState() {
@@ -89,9 +93,22 @@ class _SenseRxAppState extends State<SenseRxApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleNotificationPayload(message.data);
     });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       NotificationHandler.showNotification(message);
+      if (message.data.isNotEmpty &&
+          message.data['facilityId'] != null &&
+          message.data['facilityLayoutId'] != null) {
+        FacilityLayoutProvider facilityLayoutProvider =
+            Provider.of<FacilityLayoutProvider>(context, listen: false);
+       FacilityProvider facilityProvider = Provider.of<FacilityProvider>(context, listen: false);
+        var facilityId = message.data['facilityId'];
+        FacilityModel facility = await _facilityService
+            .getFacilityDetails(facilityId);
+        List<FacilityLayoutModel> layouts = await facilityLayoutService
+            .listFacilityLayoutsByFacilityUid(facilityId);
+        facilityProvider.setFacility(facility);
+        facilityLayoutProvider.setLayouts(layouts);
+      }
     });
     FirebaseMessaging.onBackgroundMessage(
         NotificationHandler.firebaseMessagingBackgroundHandler);

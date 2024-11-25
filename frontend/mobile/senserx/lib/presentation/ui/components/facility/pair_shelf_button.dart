@@ -25,29 +25,41 @@ class PairShelfButton extends StatelessWidget {
       label: const Text('Pair Shelf'),
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer2<WifiProvider, GlobalContextProvider>(builder: (context, wifiProvider, globalContextProvider, child) {
+    return Consumer2<WifiProvider, GlobalContextProvider>(
+        builder: (context, wifiProvider, globalContextProvider, child) {
       return buildButton(
           context,
-          wifiProvider.isConnectedToSenseShelf ? () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return ShelfProvisioningForm(
-                    initialLayoutId: globalContextProvider.currentView?.viewType == FacilityLayoutScreen ?
-                    globalContextProvider.currentView?.id : null
-                );
-              },
-            ).then((_) {
-              Provider.of<GlobalContextProvider>(context, listen: false)
-                  .updateCurrentView(null);
-            });
-          } : () {
-            DeviceUtilities.openWifiSettings();
-          }
-      );
+          wifiProvider.isConnectedToSenseShelf
+              ? () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                              child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: ShelfProvisioningForm(
+                                      initialLayoutId: globalContextProvider
+                                                  .currentView?.viewType ==
+                                              FacilityLayoutScreen
+                                          ? globalContextProvider
+                                              .currentView?.id
+                                          : null))));
+                    },
+                  ).then((_) {
+                    Provider.of<GlobalContextProvider>(context, listen: false)
+                        .updateCurrentView(null);
+                  });
+                }
+              : () {
+                  DeviceUtilities.openWifiSettings();
+                });
     });
   }
 }
-

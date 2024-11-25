@@ -199,12 +199,14 @@ export class MqttService {
 
         await inventoryEventRepository?.save(eventId, checkOutEvent);
         await inventoryEventRepository?.expire(eventId, 1200);
+
+
         return checkOutEvent;
     }
 
     /**
      * Formats a unix timestamp
-     * Todo This should go in a helper
+     * This should go in a helper
      * @param timestamp
      * @private
      */

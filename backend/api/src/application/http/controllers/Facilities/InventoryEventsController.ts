@@ -150,6 +150,9 @@ export class InventoryEventsController {
                     `Dispensed ${upc} from ${senseShelf.name}, qty. ${latestUnconfirmedCheckout.quantity}.`,
                     { facilityId, upc, quantity: quantity.toString(), shelfId, facilityLayoutId }
                 );
+                senseShelf.currentUpc = undefined;
+                senseShelf.currentQuantity = undefined;
+                await this.senseShelfRepository.save(shelfId, senseShelf);
                 this.mqttClient.publish(Channels.FIREBASE_MESSAGING + `/${facilityId}`, JSON.stringify(notificationEvent))
                 return
             } else {

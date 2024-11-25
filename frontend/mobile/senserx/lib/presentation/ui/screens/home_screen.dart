@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:senserx/application/products/barcode_scanner.dart';
 import 'package:senserx/application/products/product_service.dart';
 import 'package:senserx/domain/models/products/product_details.dart';
 import 'package:senserx/presentation/ui/components/common/display/background_scaffold.dart';
@@ -49,22 +50,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  ProductDetails parseSearchResults(Map<String, dynamic> jsonResponse) {
-    return ProductDetails.fromJson(jsonResponse);
-  }
-
   Future<void> _scanAndFetchProductDetails() async {
     try {
+      BarcodeScanner barcodeScanner = BarcodeScanner();
       setState(() {
         isScanning = true;
       });
-      String? barcode = await BarcodeScannerDialog.scan(context);
-      setState(() {
-        isScanning = false;
-      });
-      if (barcode != null) {
-        final productDetails = await _productService.getProductDetails(barcode);
-        final product = parseSearchResults(productDetails);
+      final product = await barcodeScanner.scanAndFetchProductDetails(context);
+      if(product == null) throw ArgumentError("Test");
         Navigator.of(context).push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -82,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             transitionDuration: const Duration(milliseconds: 300),
           ),
         );
-      }
     } catch (e, s) {
       setState(() {
         isScanning = false;
@@ -272,10 +264,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 },
               ),
               const SizedBox(height: 75),
-              PrimaryButton(
-                  text: "Scan Bottle",
-                  isLoading: isScanning,
-                  onPressed: _scanAndFetchProductDetails)
+              SizedBox(
+                height: 48,
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                    icon: const Icon(Icons.radar_outlined),
+                    label: const Text("Scan Barcode"),
+                    onPressed: _scanAndFetchProductDetails
+                ),
+              )
             ],
           ),
         )));
