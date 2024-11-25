@@ -9,7 +9,7 @@ export class FacilityLayoutsController {
     private layoutRepository: Repository<FacilityLayout>;
     private facilityRepository: Repository<Facility>
     private shelfRepository: Repository<SenseShelf>;
-    
+
     /**
      * @constructs FacilityLayoutsController
      * @param layoutRepository
