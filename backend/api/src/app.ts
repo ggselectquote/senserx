@@ -64,7 +64,8 @@ async function bootApp(): Promise<BootAppResult> {
         app.use(bodyParser.json())
 
         // routes
-        app.post('/inventory-events', inventoryEventsController.create);
+        app.get('/inventory-events', inventoryEventsController.getInventoryEvents)
+        app.post('/inventory-events', inventoryEventsController.create)
         app.put('/inventory-events/confirm-dispense', inventoryEventsController.updateLatestUnconfirmedCheckout)
 
         // mobile devices
