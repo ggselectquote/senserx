@@ -1,44 +1,14 @@
 import React from 'react';
-//import { AuthProvider } from './services/AuthService';
-import './styles/index.css';
+import ToastContainerWrapper from './components/ToastWrapper';
 import Dashboard from './pages/Dashboard';
-
-// const router = createBrowserRouter([
-// 	{
-// 		// element: <PrivateRoutes />,
-// 		// children: [
-// 		// 	{
-// 				element: <AppWrapper />,
-// 				children: [
-// 					{
-// 						path: `/login`,
-// 						element: <Login />,
-// 					},
-// 					{
-// 						path: `/dashboard`,
-// 						element: <Dashboard />,
-// 					},
-// 					{
-// 						path: '*',
-// 						element: <Navigate to={`/login`} replace />,
-// 					},
-// 				],
-// 		// 	},
-// 		// ],
-// 	},
-// 	{
-// 		path: '/login',
-// 		element: <Login />,
-// 	},
-// ]);
-
-// createRoot(document.getElementById('root')!).render(
-//     <Dashboard />
-// );
+import './styles/index.css';
 
 function App() {
     return (
-        <Dashboard />
+        <>
+            <ToastContainerWrapper />
+            <Dashboard />
+        </>
     );
 }
 export default App;

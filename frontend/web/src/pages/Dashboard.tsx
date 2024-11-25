@@ -1,13 +1,62 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+// import firebase from 'firebase/compat/app';
+import { onMessage } from "firebase/messaging";
 import * as React from 'react';
 import ActivityListItem from '../components/ActivityListItem';
-//import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
 import FacilityListItem from '../components/FacilityListItem';
-import type { Facility, InventoryEvent } from '../types/types.ts';
+import { Toast } from '../components/Toast';
+// import { firebaseConfig } from '../firebase/firebaseConfig';
+import { messaging, setupNotifications } from '../firebase/firebaseConfig';
+import { Facility, InventoryEvent } from '../types/types';
+// import { useActivityQuery } from '../queries/useActivityQuery';
+// import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
 
 const Dashboard = () => {
     // const { data: facilities } = useFacilitiesQuery();
-    // const { data: updates } = useActivityQuery("");
+    // const { data: updates } = useActivityQuery();
+
+    React.useEffect(() => {
+        setupNotifications();
+
+
+    // Handle foreground notifications
+        onMessage(messaging, (payload) => {
+            console.log('Foreground Message:', payload);
+            
+            Toast.info(
+                <p>
+                    <strong>"{payload.notification?.title}"</strong>
+                    <br />
+                    "{payload.notification?.body}"
+                </p>,
+            );
+            });
+      }, []);
+
+    // Initialize Firebase
+    // if (!firebase.apps.length) {
+    //     const firebaseApp = firebase.initializeApp(firebaseConfig);
+    //     // const [token, loading, error] = useToken(getMessaging(firebaseApp));
+    //     // console.log(token);
+    //     // console.log(loading);
+    //     // console.log(token);
+    // }
+    
+    // // Handle incoming messages. Called when:
+    // // - a message is received while the app has focus
+    // // - the user clicks on an app notification created by a service worker
+    // //   `messaging.onBackgroundMessage` handler.
+    //     const messaging = getMessaging();
+    //     onMessage(messaging, (payload) => {
+    //         console.log('Message received. ', payload);
+    //         Toast.info(
+    //             <p>
+    //                 <strong>"{payload.notification?.title}"</strong>
+    //                 <br />
+    //                 "{payload.notification?.body}"
+    //             </p>,
+    //         );
+    //     });
 
     const facilities : Facility[] = [{
         name: "Facility 1",
@@ -27,7 +76,7 @@ const Dashboard = () => {
 		uid: "01",
 		eventType: "dispense",
         timestamp: 1691622800000,
-        upc: "7423721512",
+        upc: "300450550248",
         quantity: 10,
         isConfirmed: true,
         facilityId: "002",
