@@ -31,7 +31,7 @@ class PairShelfButton extends StatelessWidget {
       return buildButton(
           context,
           wifiProvider.isConnectedToSenseShelf ? () {
-            showDialog(
+            showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
                 return ShelfProvisioningForm(

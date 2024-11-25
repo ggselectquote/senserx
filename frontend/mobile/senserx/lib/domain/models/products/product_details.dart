@@ -53,8 +53,8 @@ class ProductDetails {
       weight: json['weight'] ?? '',
       category: json['category'] ?? '',
       currency: json['currency'] ?? '',
-      lowestRecordedPrice: (json['lowest_recorded_price'] as num?)?.toDouble() ?? 0.0,
-      highestRecordedPrice: (json['highest_recorded_price'] as num?)?.toDouble() ?? 0.0,
+      lowestRecordedPrice: double.tryParse(json['lowest_recorded_price']) ?? 0.0,
+      highestRecordedPrice: double.tryParse(json['highest_recorded_price'])?? 0.0,
       images: (json['images'] as List<dynamic>?)?.cast<String>() ?? [],
       offers: (json['offers'] as List<dynamic>?)
           ?.map((offer) => Offer.fromJson(offer))

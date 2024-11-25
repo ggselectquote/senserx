@@ -50,6 +50,26 @@ class FacilityLayoutProvider with ChangeNotifier {
     }
   }
 
+  void updateLayout(FacilityLayoutModel updatedLayout) {
+    _updateLayoutRecursively(updatedLayout, _layouts);
+    notifyListeners();
+  }
+
+  void _updateLayoutRecursively(FacilityLayoutModel updatedLayout, List<FacilityLayoutModel> layouts) {
+    for (var i = 0; i < layouts.length; i++) {
+      FacilityLayoutModel currentLayout = layouts[i];
+
+      if (currentLayout.uid == updatedLayout.uid) {
+        layouts[i] = updatedLayout;
+        return;
+      }
+      if (currentLayout.children != null && currentLayout.children!.isNotEmpty) {
+        _updateLayoutRecursively(updatedLayout, currentLayout.children!);
+      }
+    }
+  }
+
+
   void removeLayout(String layoutId) {
     _removeLayoutRecursively(layoutId, _layouts);
     _layouts.removeWhere((layout) => layout.uid == layoutId);
@@ -74,15 +94,22 @@ class FacilityLayoutProvider with ChangeNotifier {
   }
 
   FacilityLayoutModel? findLayoutByUid(String uid) {
-    FacilityLayoutModel? layout = _layouts.firstWhere((l) => l.uid == uid);
+    return _findLayoutByUidRecursively(uid, _layouts);
+  }
 
-    for (final parent in _layouts) {
-      if (parent.children != null) {
-        layout = parent.children!.firstWhere((child) => child.uid == uid);
+  FacilityLayoutModel? _findLayoutByUidRecursively(String uid, List<FacilityLayoutModel> layouts) {
+    for (var layout in layouts) {
+      if (layout.uid == uid) {
+        return layout;
+      }
+      if (layout.children != null && layout.children!.isNotEmpty) {
+        final found = _findLayoutByUidRecursively(uid, layout.children!);
+        if (found != null) {
+          return found;
+        }
       }
     }
-
-    return layout?.uid == null ? null : layout;
+    return null;
   }
 
   void _addOrUpdateLayout(FacilityLayoutModel layout) {

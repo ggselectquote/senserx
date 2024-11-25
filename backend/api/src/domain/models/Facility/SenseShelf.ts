@@ -10,6 +10,7 @@ export const shelfSchema = z.object({
     macAddress: z.string(),
     layoutId: z.string(),
     facilityId: z.string(),
+    ipAddress: z.string().optional(),
     currentUpc: z.string().optional(),
     currentQuantity: z.number().optional(),
     lastSeen: z.number().optional(),
@@ -30,6 +31,7 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
     macAddress: string;
     layoutId: string;
     facilityId: string;
+    ipAddress?: string;
     currentUpc?: string;
     currentQuantity?: number;
     lastSeen?: number;
@@ -46,6 +48,7 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
         this.macAddress = data.macAddress;
         this.layoutId = data.layoutId;
         this.facilityId = data.facilityId;
+        this.ipAddress = data.ipAddress;
         this.currentUpc = data.currentUpc;
         this.currentQuantity = data.currentQuantity;
         this.lastSeen = Math.floor(Date.now() / 1000); // stamp as now
@@ -66,6 +69,7 @@ export class SenseShelfModel extends BaseModel<SenseShelf> {
                 layoutId: { type: 'string', indexed: true },
                 facilityId: { type: 'string', indexed: true },
                 lastSeen: { type: 'number', indexed: true  }, // unix timestamp so we can index this field
+                ipAddress: { type: 'string' },
                 currentMeasure: { type: 'number' },
                 lastReadMeasure: { type: 'number' },
                 currentUpc: { type: 'string' },

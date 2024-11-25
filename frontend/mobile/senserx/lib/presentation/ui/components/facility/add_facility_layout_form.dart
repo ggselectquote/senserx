@@ -115,11 +115,22 @@ class _AddFacilityLayoutFormState extends State<AddFacilityLayoutForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text(
-                "New Layout",
-                style:
-                TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add, size: 40, color: AppTheme.themeData.primaryColor),
+                  const SizedBox(width: 10),
+                  Text(
+                    'New Layout',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.themeData.primaryColor,
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 20),
               const SizedBox(height: 16),
               TextFormField(
                 style: formTextStyle,

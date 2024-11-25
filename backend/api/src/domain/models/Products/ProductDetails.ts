@@ -63,7 +63,7 @@ export class ProductDetailsModel extends BaseModel<ProductDetails> {
       this.weight = data.weight;
       this.category = data.category;
       this.currency = data.currency;
-      this.lowest_recorded_price = data.highest_recorded_price;
+      this.lowest_recorded_price = data.lowest_recorded_price;
       this.highest_recorded_price = data.highest_recorded_price;
       this.images = data.images;
       this.dimension = data.dimension;
@@ -73,10 +73,10 @@ export class ProductDetailsModel extends BaseModel<ProductDetails> {
     return new Schema(
         this.name,
         {
+          upc: { type: 'string', indexed: true },
           ean: { type: 'string' },
           title: { type: 'string' },
           description: { type: 'text' },
-          upc: { type: 'string' },
           brand: { type: 'string' },
           model: { type: 'string' },
           color: { type: 'string' },

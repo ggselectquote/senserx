@@ -132,15 +132,26 @@ class WifiMonitor {
   void _showNotification() {
     if (_context != null) {
       _isFormShowing = true;
-      final globalContextProvider = Provider.of<GlobalContextProvider>(_context!, listen: false);
+      final globalContextProvider =
+          Provider.of<GlobalContextProvider>(_context!, listen: false);
       String? currentLayoutId;
       if (globalContextProvider.currentView?.viewType == FacilityLayoutScreen) {
         currentLayoutId = globalContextProvider.currentView?.id;
       }
-      showDialog(
-        context: _context!,
-        builder: (BuildContext context) => ShelfProvisioningForm(initialLayoutId: currentLayoutId),
-      ).then((_) {
+      showModalBottomSheet(
+          context: _context!,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: SingleChildScrollView(
+                    child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: ShelfProvisioningForm(
+                            initialLayoutId: currentLayoutId))));
+          }).then((_) {
         _lastFormDismissalTime = DateTime.now();
         _isFormShowing = false;
       });

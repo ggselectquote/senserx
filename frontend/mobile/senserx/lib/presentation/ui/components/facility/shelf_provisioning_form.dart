@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:senserx/domain/models/facility/sense_shelf_model.dart';
 import 'package:senserx/domain/models/offline/facility_layout_option.dart';
 import 'package:senserx/infrastructure/storage/offline_storage.dart';
 import 'package:senserx/presentation/providers/application/snackbar_provider.dart';
@@ -16,8 +17,9 @@ import '../../../theme/app_theme.dart';
 
 class ShelfProvisioningForm extends StatefulWidget {
   final String? initialLayoutId;
+  final SenseShelfModel? shelf;
 
-  const ShelfProvisioningForm({Key? key,  this.initialLayoutId}) : super(key: key);
+  const ShelfProvisioningForm({super.key, this.initialLayoutId, this.shelf});
 
   @override
   State<ShelfProvisioningForm> createState() => _ShelfProvisioningFormState();
@@ -55,6 +57,12 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
     _facilityLayouts = _storageService.getFacilityLayouts();
     _fetchSSID();
 
+    if(widget.shelf != null) {
+      setState(() {
+        _shelfNameController.text = widget.shelf?.name ?? "";
+      });
+    }
+
     if (widget.initialLayoutId != null && _facilityLayouts.isNotEmpty) {
       setState(() {
         _selectedLayout = _facilityLayouts.firstWhere(
@@ -68,7 +76,7 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
   Future<void> _fetchSSID() async {
     final wifiName = await NetworkInfo().getWifiName();
     setState(() {
-      _shelfNameController.text = wifiName ?? '';
+      _ssidController.text = wifiName?.trim().replaceAll("\"", "") ?? '';
       _isLoading = false;
     });
     _animationController.forward();
@@ -102,8 +110,9 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
       };
 
       try {
+        var host = widget.shelf != null ? 'https://${widget.shelf!.ipAddress}' : dotenv.env['SHELF_AP_HOST'];
         final response = await http.post(
-          Uri.parse('${dotenv.env['SHELF_AP_HOST']}/provision'),
+          Uri.parse('$host/provision'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(payload),
         );
@@ -134,17 +143,11 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
   @override
   Widget build(BuildContext context) {
     TextStyle? formTextStyle =  AppTheme.themeData.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-
-      backgroundColor: Colors.transparent,
-      body: Center(
-          child: FadeTransition(
+    return FadeTransition(
         opacity: _fadeAnimation,
-        child: SenseRxCard(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Large "SHELF" display with WiFi symbol
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -305,7 +308,6 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
               ),
           ],
         ),
-      )),
     );
   }
 }

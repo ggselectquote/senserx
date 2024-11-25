@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:senserx/presentation/providers/application/global_context_provider.dart';
 
 import '../../../providers/application/wifi_provider.dart';
-import '../../screens/facility_layout_screen.dart';
 import '../facility/shelf_provisioning_form.dart';
 
 class WiFiFloatingActionButton extends StatelessWidget {
@@ -16,15 +15,20 @@ class WiFiFloatingActionButton extends StatelessWidget {
           ? FloatingActionButton(
               backgroundColor: Colors.blue[400],
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ShelfProvisioningForm(
-                        initialLayoutId: globalContextProvider.currentView?.viewType == FacilityLayoutScreen ?
-                        globalContextProvider.currentView?.id : null
-                    );
-                  },
-                );
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                          ),
+                          child: SingleChildScrollView(
+                              child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: const ShelfProvisioningForm(
+                                      initialLayoutId: null))));
+                    });
               },
               child: const Icon(Icons.wifi),
             )

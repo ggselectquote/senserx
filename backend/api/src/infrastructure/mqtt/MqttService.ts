@@ -77,18 +77,19 @@ export class MqttService {
                     lastSeen: Math.floor(Date.now() / 1000),
                     delta: json.delta,
                     currentMeasure: json.readMeasure,
+                    ipAddress: json.ipAddress,
                 };
                 const key = shelfData.macAddress;
                 const existingShelf = await this.redisService.senseShelfRepository?.fetch(key);
                 shelfData.currentUpc = existingShelf?.currentUpc;
-                shelfData.currentMeasure = existingShelf?.currentQuantity;
+                shelfData.currentQuantity = existingShelf?.currentQuantity;
                 shelfData.lastReadMeasure = existingShelf?.currentMeasure || existingShelf?.lastReadMeasure || 0;
-                if (existingShelf?.name !== shelfData.name) {
+                if (existingShelf?.name !== shelfData.name || existingShelf?.layoutId !== shelfData.layoutId) {
                     const devices = await this.fetchMobileDevicesByFacilityId(shelfData.facilityId);
                     if (devices.length > 0) {
                         const notificationEvent = new NotificationEvent(
-                            "New Shelf Online",
-                            `A new shelf named ${shelfData.name} has come online at your facility.`,
+                            "Shelf Online",
+                            `${shelfData.name} has come online at your facility.`,
                             {
                                 shelfId: shelfData.macAddress,
                                 facilityLayoutId: shelfData.layoutId,
@@ -170,7 +171,7 @@ export class MqttService {
             latestCheckinEvent.shelfId = shelfData.macAddress;
             latestCheckinEvent.confirmedAt = Math.floor(Date.now() / 1000);
             await inventoryEventRepository?.save(latestCheckinEvent.uid, latestCheckinEvent);
-            await this.redisService.persist(`InventoryEventModel:${latestCheckinEvent}`)
+            await this.redisService.persist(`InventoryEventModel:${latestCheckinEvent.uid}`)
             shelfData.currentUpc = latestCheckinEvent.upc;
             shelfData.currentQuantity = latestCheckinEvent.quantity;
             await senseShelfRepository?.save(shelfData.macAddress, shelfData);
@@ -185,6 +186,8 @@ export class MqttService {
     async handleFallingEdge(shelfData: SenseShelf) {
         const inventoryEventRepository = this.redisService.inventoryEventRepository;
         const senseShelfRepository = this.redisService.senseShelfRepository;
+        console.log("Handle falling edge")
+        console.log(shelfData)
         if (!shelfData.currentUpc || !shelfData.currentQuantity) return; // ignore a checkout event without a product UPC
         const eventId = randomUUID();
         const checkOutEvent =  InventoryEventModel.toModel({
@@ -198,11 +201,9 @@ export class MqttService {
             timestamp: Math.floor(Date.now() / 1000),
             uid: eventId
         })
+        
         await inventoryEventRepository?.save(eventId, checkOutEvent);
         await inventoryEventRepository?.expire(eventId, 1200);
-        // clear the current upc from the shelf
-        shelfData.currentUpc = undefined;
-        await senseShelfRepository?.save(shelfData.macAddress, shelfData);
         return checkOutEvent;
     }
 

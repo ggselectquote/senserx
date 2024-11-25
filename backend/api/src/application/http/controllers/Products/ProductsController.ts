@@ -27,15 +27,18 @@ export class ProductDetailsController {
   public getProductById = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
     try {
       const { upc } = req.params;
-      const cachedData = await this.productDetailRepository.fetch(upc);
-      if (cachedData?.ean) {
+      const cachedData =  await this.productDetailRepository.search()
+          .where('upc')
+          .equals(upc)
+          .return.first();
+      if (cachedData) {
         res.status(200).json(ProductDetailsModel.toModel(cachedData));
         return;
       }
       const response = await axios.get(`${API_BASE_URL}${upc}`);
       if (response.data.items?.length > 0) {
         const product = ProductDetailsModel.toModel(response.data.items[0]);
-        await this.productDetailRepository.save(product);
+        await this.productDetailRepository.save(upc, product);
         res.status(200).json(product);
       } else {
         res.status(404).json({ error: 404, error_message: "Product ID not found" });

@@ -9,6 +9,7 @@
 #include "esp_system.h"
 #include "esp_wifi_types.h"
 #include "../NvsFlash/NvsFlash.h"
+#include <esp_netif.h>
 #include "../Definitions/Definitions.h"
 
 static const char *TAG = "MQTT_SERVICE";
@@ -160,16 +161,26 @@ void send_heartbeat_message(esp_mqtt_client_handle_t client, const SignalMessage
         return;
     }
 
+    esp_netif_t *netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+    esp_netif_ip_info_t ip_info;
+    char ip_address[16];
+
+    if (netif != NULL && esp_netif_get_ip_info(netif, &ip_info) == ESP_OK) {
+        snprintf(ip_address, sizeof(ip_address), IPSTR, IP2STR(&ip_info.ip));
+    } else {
+        strcpy(ip_address, "Unknown");
+    }
+
     char heartbeat_message[500];
     if (signalMsg != NULL) {
-        snprintf(heartbeat_message, sizeof(heartbeat_message),
-                 "{\"status\": \"heartbeat\", \"deviceId\": \"%s\", \"facilityId\": \"%s\", \"facilityLayoutId\": \"%s\", \"deviceName\": \"%s\", \"readTime\": %.2f, \"readMeasure\": %.2f, \"delta\": %.2f}",
-                 mac_str, facilityId, facilityLayoutId, deviceName, signalMsg->readingTime, signalMsg->readingMeasure, signalMsg->delta);
-    } else {
-        snprintf(heartbeat_message, sizeof(heartbeat_message),
-                 "{\"status\": \"heartbeat\", \"deviceId\": \"%s\", \"facilityId\": \"%s\", \"facilityLayoutId\": \"%s\", \"deviceName\": \"%s\"}",
-                 mac_str, facilityId, facilityLayoutId, deviceName);
-    }
+             snprintf(heartbeat_message, sizeof(heartbeat_message),
+                "{\"status\": \"heartbeat\", \"deviceId\": \"%s\", \"facilityId\": \"%s\", \"facilityLayoutId\": \"%s\", \"deviceName\": \"%s\", \"ipAddress\": \"%s\", \"readTime\": %.2f, \"readMeasure\": %.2f, \"delta\": %.2f}",
+                    mac_str, facilityId, facilityLayoutId, deviceName, ip_address, signalMsg->readingTime, signalMsg->readingMeasure, signalMsg->delta);
+        } else {
+            snprintf(heartbeat_message, sizeof(heartbeat_message),
+                    "{\"status\": \"heartbeat\", \"deviceId\": \"%s\", \"facilityId\": \"%s\", \"facilityLayoutId\": \"%s\", \"deviceName\": \"%s\", \"ipAddress\": \"%s\"}",
+                    mac_str, facilityId, facilityLayoutId, deviceName, ip_address);
+        }
 
     int msg_id = esp_mqtt_client_publish(client, topic, heartbeat_message, 0, 1, 0);
     if (msg_id != -1) {

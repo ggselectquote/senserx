@@ -6,8 +6,7 @@ enum FacilityLayout {
   section,
   wall,
   wing,
-  unit,
-  other;
+  unit;
 
   /// Converts a string to a corresponding `LocationType`
   static FacilityLayout fromString(String type) {
@@ -25,7 +24,7 @@ enum FacilityLayout {
       case 'unit':
         return FacilityLayout.unit;
       default:
-        return FacilityLayout.other;
+        return FacilityLayout.unit;
     }
   }
 
@@ -44,7 +43,6 @@ enum FacilityLayout {
         return const Icon(Icons.airplanemode_active, color: Colors.orange);
       case FacilityLayout.unit:
         return const Icon(Icons.house, color: Colors.red);
-      case FacilityLayout.other:
       default:
         return const Icon(Icons.build, color: Colors.grey);
     }
