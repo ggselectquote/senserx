@@ -6,6 +6,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "firebase-admin": "^13.0.0",
@@ -26,6 +27,7 @@
     "docker:up": "docker compose -f ../docker-compose.yml build && docker compose -f ../docker-compose.yml up -d"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
     "@types/mqtt": "^2.5.0",

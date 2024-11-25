@@ -9,6 +9,7 @@ export class FacilityLayoutsController {
     private layoutRepository: Repository<FacilityLayout>;
     private facilityRepository: Repository<Facility>
     private shelfRepository: Repository<SenseShelf>;
+    
     /**
      * @constructs FacilityLayoutsController
      * @param layoutRepository
@@ -19,26 +20,6 @@ export class FacilityLayoutsController {
         this.layoutRepository = layoutRepository;
         this.facilityRepository = facilityRepository;
         this.shelfRepository = shelfRepository;
-    }
-
-    /**
-     * Create a check-inb record
-     * @param req
-     * @param res
-     * @param next
-     */
-    public checkin = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
-        return;
-    }
-
-    /**
-     * Create a check-out record
-     * @param req
-     * @param res
-     * @param next
-     */
-    public checkout = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
-        return;
     }
 
     /**
