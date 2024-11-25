@@ -14,7 +14,7 @@ The SelectRX Pharmacy teams require a better understanding of their current inve
 
 ### Solution:
 
-We are designing a prototype technical implementation for physically tracking pharmaceutical inventory using a mobile application and smart-shelving units. Each smart-shelf is equipped with a load cell, signal amplifier, and a WiFi-enabled microcontroller. For demonstration purposes, the prototype will utilize the UPC Item DB JSON API to fetch product details on supplement and OTC products.
+We are designing a prototype technical implementation for physically tracking pharmaceutical inventory using a mobile application and smart-shelving units. Each smart-shelf is equipped with a force sense resistor, 10K Ohm resistor, and a WiFi-enabled microcontroller. For demonstration purposes, the prototype will utilize the UPC Item DB JSON API to fetch product details on supplement and OTC products.
 
 ## Getting Started
 
