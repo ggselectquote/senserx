@@ -1,29 +1,61 @@
-import { AppBar, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 import * as React from 'react';
 import ActivityListItem from '../components/ActivityListItem';
-import FacilityRow from '../components/FacilityRow';
-import type { Activity, Facility } from '../types/types.ts';
 //import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
+import FacilityListItem from '../components/FacilityListItem';
+import type { Facility, InventoryEvent } from '../types/types.ts';
 
 const Dashboard = () => {
-    // const { data: facilities } = useFacilitiesQuery("9b5a1a77-a5b3-4b86-9066-99a7a30b8ac3");
+    // const { data: facilities } = useFacilitiesQuery();
+    // const { data: updates } = useActivityQuery("");
+
     const facilities : Facility[] = [{
-		name: "F1",
-		facilityId: "123"
+        name: "Facility 1",
+        contact: "Greg",
+		address: "a",
+		uid: "123",
+        layoutIds: ["9b5a1a77-a5b3-4b86-9066-99a7a30b8ac3", "a3e4ae77-c38b-4b01-a085-8e19c7e10770"]
 	},
 	{
-		name: "F2",
-		facilityId: "456"		
+		name: "Facility 2",
+        contact: "Andrew",
+		address: "a",
+        uid: "456",
+        layoutIds: ["", ""]
 	}];
-    // const { data: updates } = useActivityQuery("9b5a1a77-a5b3-4b86-9066-99a7a30b8ac3");
-    const updates : Activity[] = [{
-		name: "Event A",
-		date: new Date()
+    const updates: InventoryEvent[] = [{
+		uid: "01",
+		eventType: "dispense",
+        timestamp: 1691622800000,
+        upc: "7423721512",
+        quantity: 10,
+        isConfirmed: true,
+        facilityId: "002",
+        facilityLayoutId: "005",
+        shelfId: "008",
 	},
+    {
+        uid: "02",
+        eventType: "receive",
+        timestamp: 1691621800000,
+        upc: "8423791513",
+        quantity: 150,
+        isConfirmed: true,
+        facilityId: "001",
+        facilityLayoutId: "004",
+        shelfId: "007",
+    },
 	{
-		name: "Event B",
-		date: new Date()	
-	}];
+		uid: "01",
+		eventType: "dispense",
+        timestamp: 1691623800000,
+        upc: "6423701511",
+        quantity: 25,
+        isConfirmed: false,
+        facilityId: "003",
+        facilityLayoutId: "006",
+        shelfId: "009",
+    }];
 
     return (
         <>
@@ -58,46 +90,37 @@ const Dashboard = () => {
                 </AppBar> 
                 <Box
                     sx={{
-                        mt: 6,
+                        mt: 8,
                         p: 2,
                         height: '100%',
                         flex: 1,
                     }}
                 >
-                    <Box sx={{ my: 2 }}>
-                        <Typography variant="h6">Facilities</Typography>
-                    </Box>
-                    <TableContainer component={Paper} sx={{maxWidth: 600}}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 800}}>Name</TableCell>
-                                    <TableCell sx={{ fontWeight: 800}}>Id</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {facilities &&
-                                    facilities!.map((facility) => (
-                                        <FacilityRow
-                                            key={facility.facilityId}
-                                            facility={facility}
-                                        />
-                                    ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Box sx={{ mt: 5, mb: 2 }}>
-                        <Typography variant="h6">Updates</Typography>                        
+                    {facilities &&
+                        facilities!.map((facility) => (
+                            // <FacilityRow
+                            //     key={facility.uid}
+                            //     facility={facility}
+                            // />
+                            <FacilityListItem
+                                key={facility.uid}
+                                facility={facility}
+                            />
+                        ))}
+                    <Box sx={{ mt: 2, mb: 2 }}>
+                        <Typography variant="h6">Update Log</Typography>                        
                     </Box>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                    }}>
+                        ml: 2,
+                        p: 0,
+                    }} component='ul'>
                     {updates &&
-                        updates!.map((update) => (
+                        updates.sort(u => u.timestamp)!.map((update) => (
                             <ActivityListItem
-                                key={update.name + '_' + update.date.toDateString()}
-                                activity={update}
+                                key={update.eventType + '_' + update.upc + '_' + update.timestamp}
+                                event={update}
                             />
                         ))}
                     </Box>

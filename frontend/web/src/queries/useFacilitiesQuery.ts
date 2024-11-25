@@ -3,14 +3,14 @@ import { useQuery } from 'react-query';
 import type { Facility } from '../types/types.ts';
 import { fetchWrapper } from '../utils/fetchWrapper';
 
-export function useFacilitiesQuery(
+export function useFacilityQuery(
 	facilityId: string | null,
-	options?: UseQueryOptions<Facility[], Error>,
+	options?: UseQueryOptions<Facility, Error>,
 ) {
-	return useQuery<Facility[], Error>({
+	return useQuery<Facility, Error>({
 		queryKey: ['facility', facilityId],
 		queryFn: async () => {
-			const response = await fetchWrapper<Facility[]>(
+			const response = await fetchWrapper<Facility>(
 				'GET',
 				`facilities/${facilityId}`,
 			);
@@ -26,6 +26,31 @@ export function useFacilitiesQuery(
 		},
 		retry: false,
 		enabled: !!facilityId,
+		...options,
+	});
+}
+
+export function useFacilitiesQuery(
+	options?: UseQueryOptions<Facility[], Error>,
+) {
+	return useQuery<Facility[], Error>({
+		queryKey: 'facilities',
+		queryFn: async () => {
+			const response = await fetchWrapper<Facility[]>(
+				'GET',
+				`facilities`,
+			);
+			if (typeof response === 'string') {
+				try {
+					JSON.parse(response);
+				} catch (e) {
+					console.error('Invalid JSON:', response);
+					throw new Error('Invalid JSON response');
+				}
+			}
+			return response;
+		},
+		retry: false,
 		...options,
 	});
 }

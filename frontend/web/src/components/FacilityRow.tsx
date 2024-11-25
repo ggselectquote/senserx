@@ -7,12 +7,12 @@ const FacilityRow = ({ facility }: { facility: Facility }) => {
 		<TableRow>
 			<TableCell>
 				<Typography sx={{ fontWeight: 600 }}>
-					{facility.name}
+				{facility.name} ( {facility.contact} )
 				</Typography>
 			</TableCell>
 			<TableCell>
 				<Typography sx={{}}>
-					{facility.facilityId}
+					{facility.uid}
 				</Typography>
 			</TableCell>			
 		</TableRow>

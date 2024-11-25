@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material';
 import * as React from 'react';
-import type { Activity } from '../types/types';
+import type { InventoryEvent } from '../types/types';
 import { DateTimeRenderer } from './DateTimeRenderer';
 
-const ActivityListItem = ({ activity }: { activity: Activity }) => {
+const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
 	return (
 		<Box
 			sx={{
@@ -18,10 +18,10 @@ const ActivityListItem = ({ activity }: { activity: Activity }) => {
 				}}
 			>
 				<Typography sx={{ mr: 2, fontWeight: 600 }}>
-					{activity.name}
+					{event.eventType}
 				</Typography>
 				<DateTimeRenderer
-					date={activity.date}
+					date={new Date(event.timestamp)}
 					typographySx={{ color: 'grey' }}
 				/>
 			</Box>
@@ -32,9 +32,9 @@ const ActivityListItem = ({ activity }: { activity: Activity }) => {
 					pl: 2,
 				}}
 			>
-				{activity.details ? (
-					<Typography>
-						{activity.details}
+				{event.upc ? (
+					<Typography sx={{fontSize: 15}}>
+						UPC: {event.upc} (facility: {event.facilityId}, layout: {event.facilityLayoutId}, shelf: {event.shelfId})
 					</Typography>
 				) : (
 					''
