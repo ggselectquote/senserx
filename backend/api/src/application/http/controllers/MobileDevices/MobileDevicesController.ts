@@ -33,7 +33,7 @@ export class MobileDevicesController {
                 lastNotified: null,
                 facilityId
             });
-            await this.mobileDeviceRepository.save(fcmToken, newDevice);
+            await this.mobileDeviceRepository.save(uid, newDevice);
             res.status(201).json(newDevice);
         } catch (error) {
             next(error);
@@ -63,8 +63,9 @@ export class MobileDevicesController {
      */
     public getOne = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
         try {
-            const device = await this.mobileDeviceRepository.fetch(req.params.uid);
-            if (device) {
+            console.log(req.params.id)
+            const device = await this.mobileDeviceRepository.fetch(req.params.id);
+            if (device?.fcmToken) {
                 res.json(device);
             } else {
                 res.status(404).send('Mobile device not found');
@@ -82,12 +83,11 @@ export class MobileDevicesController {
      */
     public update = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
         try {
-            const { uid } = req.params;
-            const device = await this.mobileDeviceRepository.fetch(uid);
+            const device = await this.mobileDeviceRepository.fetch(req.params.id);
             if (device) {
                 const { platform, osVersion, fcmToken, facilityId } = req.body;
                 const updatedDevice = MobileDeviceModel.toModel({ ...device, platform, osVersion, fcmToken, facilityId });
-                await this.mobileDeviceRepository.save(fcmToken, updatedDevice);
+                await this.mobileDeviceRepository.save(req.params.id, updatedDevice);
                 res.json(updatedDevice);
             } else {
                 res.status(404).send('Mobile device not found');
@@ -105,10 +105,9 @@ export class MobileDevicesController {
      */
     public delete = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
         try {
-            const { uid } = req.params;
-            const device = await this.mobileDeviceRepository.fetch(uid);
+            const device = await this.mobileDeviceRepository.fetch(req.params.id);
             if (device) {
-                await this.mobileDeviceRepository.remove(uid);
+                await this.mobileDeviceRepository.remove(req.params.id);
                 res.status(204).send();
             } else {
                 res.status(404).send('Mobile device not found');
