@@ -83,3 +83,4 @@ npm-debug.log*
 frontend/web/src/firebase/firebaseConfig.ts
 backend/api/senserx-firebase-adminsdk-h9drf-3efdc54ebd.json
 frontend/mobile/senserx/.env-dev
+frontend/web/src/firebase/firebaseConfig.ts
