@@ -1,4 +1,4 @@
-import { Box, Paper, Tooltip, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import * as React from 'react';
 import { useProductQuery } from '../queries/useProductQuery';
 import type { SenseShelf } from '../types/types';
@@ -47,6 +47,7 @@ const ShelfListItem = ({ shelf }: { shelf: SenseShelf }) => {
 			
 			{product ? (
 				<Box>
+					<Typography sx={{ fontSize: 14 }}>{product.brand}</Typography>
 					{product.images.length > 0 && (
 						<Box sx={{m:.5}}>
 							<img
@@ -58,10 +59,9 @@ const ShelfListItem = ({ shelf }: { shelf: SenseShelf }) => {
 							</Box>
 					)}
 					<Box>
-						{/* <Typography sx={{ fontSize: 14 }}>{product.brand}</Typography> */}
-						<Tooltip title={ product.description } sx={{color: '#333333'}}>
+						{/* <Tooltip title={ product.description } sx={{color: '#333333'}}> */}
 							<Typography sx={{fontSize: 14}}>{ product.title }</Typography>
-						</Tooltip>
+						{/* </Tooltip> */}
 						<Typography sx={{fontSize: 14}}>Weight: { product.weight }</Typography>
 					</Box>
 				</Box>

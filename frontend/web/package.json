@@ -27,7 +27,7 @@
     "@types/react-dom": "^18.3.1",
     "typescript": "^5.6.3"
   },
-  "proxy": "https://8ef0-74-111-118-113.ngrok-free.app",
+  "proxy": "https://selectquote.ngrok.io",
   "browserslist": {
     "production": [
       ">0.2%",

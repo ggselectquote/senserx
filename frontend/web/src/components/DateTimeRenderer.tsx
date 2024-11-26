@@ -1,4 +1,4 @@
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import * as React from 'react';
 
 export const DateTimeRenderer = ({
@@ -10,51 +10,36 @@ export const DateTimeRenderer = ({
 	verb?: string;
 	typographySx?: object;
 }) => {
-	const verbAsLowerCase = verb?.toLowerCase();
-
 	return (
-		<Tooltip
-			title={
-				date
-					? new Intl.DateTimeFormat('en', {
-							timeStyle: 'long',
-						}).format(new Date(date))
-					: `Never ${verbAsLowerCase}`
-			}
-		>
+		// <Tooltip
+		// 	title={
+		// 		date && new Intl.DateTimeFormat('en', {
+		// 					timeStyle: 'long',
+		// 				}).format(new Date(date))
+		// 	}
+		// 	sx={{ color: '#333333' }}
+		// 	disableInteractive
+		// >
 			<Box
 				sx={{
 					display: 'flex',
 					alignItems: 'center',
-					mb: 0.5,
 				}}
 			>
-				{date ? (
+				{date && (
 					<Typography
-						variant="body2"
 						sx={{
 							...typographySx,
 						}}
 					>
-						{verb}{' '}
 						{new Date(date).toLocaleDateString('en-us', {
-							weekday: 'long',
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric',
-						})}
-					</Typography>
-				) : (
-					<Typography
-						variant="body2"
-						sx={{
-							...typographySx,
-						}}
-					>
-						Never {verbAsLowerCase}
+						})}{' '}
+					{new Intl.DateTimeFormat('en', {
+						timeStyle: 'long',
+					}).format(new Date(date))}
 					</Typography>
 				)}
 			</Box>
-		</Tooltip>
+		// </Tooltip>
 	);
 };

@@ -7,7 +7,7 @@ const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
 	return (
 		<Box
 			sx={{
-				mb: .7,
+				mb: 1.5,
 			}}
 		>
 			<Box
@@ -17,28 +17,27 @@ const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
 					alignItems: 'flex-start',
 				}}
 			>
-				<Typography sx={{ mr: 2, fontWeight: 600 }}>
+				<Typography sx={{ mr: 2, fontWeight: 600, lineHeight: 1.7 }}>
 					{event.eventType}
 				</Typography>
 				<DateTimeRenderer
 					date={new Date(event.timestamp * 1000)}
-					typographySx={{ color: 'grey' }}
+					typographySx={{
+						fontSize: 14,
+					 }}
 				/>
 			</Box>
 			<Box
 				sx={{
-					display: 'flex',
-					flexDirection: 'row',
-					pl: 2,
+					pl: 2
 				}}
 			>
-				{event.upc ? (
-					<Typography sx={{fontSize: 15}}>
-						UPC: {event.upc} (facility: {event.facilityId}, layout: {event.facilityLayoutId}, shelf: {event.shelfId})
+				<Typography sx={{fontSize: 14, lineHeight: 1.5}}>
+					UPC: {event.upc} (<Typography component='span' sx={{color: 'green', fontSize: 14, lineHeight: 1.5}}>qty: {event.quantity}</Typography>)
+					<Typography component='span' sx={{ color: 'grey', fontSize: 14, lineHeight: 1.5}}>
+						, facility: {event.facilityId}, shelf: {event.shelfId}
 					</Typography>
-				) : (
-					''
-				)}
+				</Typography>
 			</Box>
 		</Box>
 	);
