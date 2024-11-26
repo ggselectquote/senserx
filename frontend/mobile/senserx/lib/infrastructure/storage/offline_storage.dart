@@ -11,6 +11,7 @@ class OfflineStorage {
   }
 
   Future<void> storeFacilityLayouts(List<FacilityLayoutOption> layouts) async {
+    if(layouts.isEmpty) return;
     final box = Hive.box<FacilityLayoutOption>(_boxName);
     await box.clear();
     await box.addAll(layouts);
