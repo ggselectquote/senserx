@@ -10,7 +10,6 @@ import 'package:senserx/infrastructure/storage/offline_storage.dart';
 import 'package:senserx/presentation/providers/application/snackbar_provider.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/cancel_button.dart';
 import 'package:senserx/presentation/ui/components/common/buttons/primary_button.dart';
-import 'package:senserx/presentation/ui/components/common/display/senserx_card.dart';
 import 'package:senserx/presentation/ui/components/common/inputs/senserx_filter_list.dart';
 
 import '../../../theme/app_theme.dart';
@@ -76,7 +75,8 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
   Future<void> _fetchSSID() async {
     final wifiName = await NetworkInfo().getWifiName();
     setState(() {
-      _ssidController.text = wifiName?.trim().replaceAll("\"", "") ?? '';
+      _shelfNameController.text = (widget.shelf == null ? wifiName?.replaceAll("\"", "")  : widget.shelf?.name ?? "") ?? ""; // default the name to the name desgination of ht e shelf
+      _ssidController.text = (widget.shelf == null ? "" : wifiName ?? ""); // default to the users' connected network when they are editing the shelf
       _isLoading = false;
     });
     _animationController.forward();
@@ -161,7 +161,7 @@ class _ShelfProvisioningFormState extends State<ShelfProvisioningForm>
                       size: 40, color: AppTheme.themeData.primaryColor),
                   const SizedBox(width: 10),
                   Text(
-                    'SenseRx Shelf',
+                    'Pair Shelf',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,

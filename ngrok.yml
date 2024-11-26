@@ -1,0 +1,7 @@
+tunnels:
+  http-tunnel:
+    proto: http
+    addr: 6868
+  mqtt-tunnel:
+    proto: tcp
+    addr: 1883
