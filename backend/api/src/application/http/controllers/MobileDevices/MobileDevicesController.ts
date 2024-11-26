@@ -23,7 +23,16 @@ export class MobileDevicesController {
     public create = async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
         try {
             const { deviceId, platform, osVersion, fcmToken, facilityId } = req.body;
+            const devices = await this.mobileDeviceRepository.search()
+                .where("fcmToken").equals(fcmToken)
+                .return.all();
+            if (devices.length > 0) {
+                res.status(400).json({message: "This device is already registered."})
+                return
+            }
+
             const uid = randomUUID();
+
             const newDevice = new MobileDeviceModel({
                 uid,
                 deviceId,

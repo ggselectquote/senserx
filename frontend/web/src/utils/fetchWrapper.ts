@@ -25,6 +25,7 @@ export async function fetchWrapper<TData, TBody = unknown>(
 			Accept: 'application/json',
 			Cache: 'no-cache',
 			'X-Requested-With': 'XMLHttpRequest',
+			'ngrok-skip-browser-warning': 'true'
 		},
 		credentials: 'include' as const,
 		...additionalOptions,

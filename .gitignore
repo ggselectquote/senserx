@@ -13,6 +13,8 @@ backend/*/cmake-build-debug
 backend/*/**/.pem
 backend/*/**/credentials.h
 
+*/**/senserx-firebase-adminsdk-h9drf-3efdc54ebd.json
+
 *.log
 *.pid
 *.seed
