@@ -1,77 +1,49 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-// import firebase from 'firebase/compat/app';
-import { onMessage } from "firebase/messaging";
+import { getMessaging, onMessage } from "firebase/messaging";
 import * as React from 'react';
 import ActivityListItem from '../components/ActivityListItem';
 import FacilityListItem from '../components/FacilityListItem';
 import { Toast } from '../components/Toast';
-// import { firebaseConfig } from '../firebase/firebaseConfig';
-import { messaging, setupNotifications } from '../firebase/firebaseConfig';
-import { Facility, InventoryEvent } from '../types/types';
+import { setupNotifications } from '../firebase/firebaseConfig';
 // import { useActivityQuery } from '../queries/useActivityQuery';
-// import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
+import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
+import { InventoryEvent } from '../types/types';
 
 const Dashboard = () => {
-    // const { data: facilities } = useFacilitiesQuery();
+    const { data: facilities } = useFacilitiesQuery();
     // const { data: updates } = useActivityQuery();
 
     React.useEffect(() => {
         setupNotifications();
+    }, []);
 
+    const messaging = getMessaging();
+    onMessage(messaging, (payload) => {
+        console.log('Firebase Message:', payload);
+        
+        Toast.info(
+            <p>
+                <strong>"{payload.notification?.title}"</strong>
+                <br />
+                "{payload.notification?.body}"
+            </p>,
+        );
+    });
 
-    // Handle foreground notifications
-        onMessage(messaging, (payload) => {
-            console.log('Foreground Message:', payload);
-            
-            Toast.info(
-                <p>
-                    <strong>"{payload.notification?.title}"</strong>
-                    <br />
-                    "{payload.notification?.body}"
-                </p>,
-            );
-            });
-      }, []);
-
-    // Initialize Firebase
-    // if (!firebase.apps.length) {
-    //     const firebaseApp = firebase.initializeApp(firebaseConfig);
-    //     // const [token, loading, error] = useToken(getMessaging(firebaseApp));
-    //     // console.log(token);
-    //     // console.log(loading);
-    //     // console.log(token);
-    // }
-    
-    // // Handle incoming messages. Called when:
-    // // - a message is received while the app has focus
-    // // - the user clicks on an app notification created by a service worker
-    // //   `messaging.onBackgroundMessage` handler.
-    //     const messaging = getMessaging();
-    //     onMessage(messaging, (payload) => {
-    //         console.log('Message received. ', payload);
-    //         Toast.info(
-    //             <p>
-    //                 <strong>"{payload.notification?.title}"</strong>
-    //                 <br />
-    //                 "{payload.notification?.body}"
-    //             </p>,
-    //         );
-    //     });
-
-    const facilities : Facility[] = [{
-        name: "Facility 1",
-        contact: "Greg",
-		address: "a",
-		uid: "123",
-        layoutIds: ["9b5a1a77-a5b3-4b86-9066-99a7a30b8ac3", "a3e4ae77-c38b-4b01-a085-8e19c7e10770"]
-	},
-	{
-		name: "Facility 2",
-        contact: "Andrew",
-		address: "a",
-        uid: "456",
-        layoutIds: ["", ""]
-	}];
+    // const facilities : Facility[] = [{
+    //     name: "Facility 1",
+    //     contact: "Greg",
+	// 	address: "a",
+	// 	uid: "123",
+    //     layoutIds: ["9b5a1a77-a5b3-4b86-9066-99a7a30b8ac3", "a3e4ae77-c38b-4b01-a085-8e19c7e10770"]
+	// },
+	// {
+	// 	name: "Facility 2",
+    //     contact: "Andrew",
+	// 	address: "a",
+    //     uid: "456",
+    //     layoutIds: ["", ""]
+	// }];
     const updates: InventoryEvent[] = [{
 		uid: "01",
 		eventType: "dispense",
