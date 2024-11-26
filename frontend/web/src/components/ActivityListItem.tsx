@@ -21,7 +21,7 @@ const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
 					{event.eventType}
 				</Typography>
 				<DateTimeRenderer
-					date={new Date(event.timestamp)}
+					date={new Date(event.timestamp * 1000)}
 					typographySx={{ color: 'grey' }}
 				/>
 			</Box>

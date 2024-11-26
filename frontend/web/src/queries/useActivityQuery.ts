@@ -1,15 +1,15 @@
 import type { UseQueryOptions } from 'react-query';
 import { useQuery } from 'react-query';
-import type { InventoryEvent } from '../types/types.ts';
 import { fetchWrapper } from '../utils/fetchWrapper';
+import { InventoryEventResponse } from '../types/types';
 
 export function useActivityQuery(
-	options?: UseQueryOptions<InventoryEvent[], Error>,
+	options?: UseQueryOptions<InventoryEventResponse, Error>,
 ) {
-	return useQuery<InventoryEvent[], Error>({
+	return useQuery<InventoryEventResponse, Error>({
 		queryKey: 'events',
 		queryFn: async () => {
-			const response = await fetchWrapper<InventoryEvent[]>(
+			const response = await fetchWrapper<InventoryEventResponse>(
 				'GET',
 				`inventory-events`,
 			);

@@ -8,8 +8,7 @@ import {
 
 export type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
-//export const apiUrl = 'http://localhost:6868/';
-export const apiUrl = 'https://8ef0-74-111-118-113.ngrok-free.app/';
+export const apiUrl = '/';
 
 const TIMEOUT = 60 * 1000; // 60 seconds in milliseconds. This is how all of our calls are configured by default.
 

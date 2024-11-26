@@ -62,3 +62,10 @@ export type InventoryEvent = {
     facilityLayoutId?: string;
     confirmedAt?: number;
 };
+
+export type InventoryEventResponse = {
+    events: InventoryEvent[];
+    currentPage?: number;
+    totalPages?: number;
+    totalCount?: number;
+};

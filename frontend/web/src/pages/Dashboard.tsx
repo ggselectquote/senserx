@@ -5,13 +5,12 @@ import ActivityListItem from '../components/ActivityListItem';
 import FacilityListItem from '../components/FacilityListItem';
 import { Toast } from '../components/Toast';
 import { setupNotifications } from '../firebase/firebaseConfig';
-// import { useActivityQuery } from '../queries/useActivityQuery';
+import { useActivityQuery } from '../queries/useActivityQuery';
 import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
-import { InventoryEvent } from '../types/types';
 
 const Dashboard = () => {
     const { data: facilities } = useFacilitiesQuery();
-    // const { data: updates } = useActivityQuery();
+    const { data: updates } = useActivityQuery();
 
     React.useEffect(() => {
         setupNotifications();
@@ -44,39 +43,39 @@ const Dashboard = () => {
     //     uid: "456",
     //     layoutIds: ["", ""]
 	// }];
-    const updates: InventoryEvent[] = [{
-		uid: "01",
-		eventType: "dispense",
-        timestamp: 1691622800000,
-        upc: "300450550248",
-        quantity: 10,
-        isConfirmed: true,
-        facilityId: "002",
-        facilityLayoutId: "005",
-        shelfId: "008",
-	},
-    {
-        uid: "02",
-        eventType: "receive",
-        timestamp: 1691621800000,
-        upc: "8423791513",
-        quantity: 150,
-        isConfirmed: true,
-        facilityId: "001",
-        facilityLayoutId: "004",
-        shelfId: "007",
-    },
-	{
-		uid: "01",
-		eventType: "dispense",
-        timestamp: 1691623800000,
-        upc: "6423701511",
-        quantity: 25,
-        isConfirmed: false,
-        facilityId: "003",
-        facilityLayoutId: "006",
-        shelfId: "009",
-    }];
+    // const updates: InventoryEvent[] = [{
+	// 	uid: "01",
+	// 	eventType: "dispense",
+    //     timestamp: 1691622800000,
+    //     upc: "300450550248",
+    //     quantity: 10,
+    //     isConfirmed: true,
+    //     facilityId: "002",
+    //     facilityLayoutId: "005",
+    //     shelfId: "008",
+	// },
+    // {
+    //     uid: "02",
+    //     eventType: "receive",
+    //     timestamp: 1691621800000,
+    //     upc: "8423791513",
+    //     quantity: 150,
+    //     isConfirmed: true,
+    //     facilityId: "001",
+    //     facilityLayoutId: "004",
+    //     shelfId: "007",
+    // },
+	// {
+	// 	uid: "01",
+	// 	eventType: "dispense",
+    //     timestamp: 1691623800000,
+    //     upc: "6423701511",
+    //     quantity: 25,
+    //     isConfirmed: false,
+    //     facilityId: "003",
+    //     facilityLayoutId: "006",
+    //     shelfId: "009",
+    // }];
 
     return (
         <>
@@ -119,10 +118,6 @@ const Dashboard = () => {
                 >
                     {facilities &&
                         facilities!.map((facility) => (
-                            // <FacilityRow
-                            //     key={facility.uid}
-                            //     facility={facility}
-                            // />
                             <FacilityListItem
                                 key={facility.uid}
                                 facility={facility}
@@ -137,8 +132,8 @@ const Dashboard = () => {
                         ml: 2,
                         p: 0,
                     }} component='ul'>
-                    {updates &&
-                        updates.sort(u => u.timestamp)!.map((update) => (
+                    {updates && updates.events &&
+                        updates.events.sort(u => u.timestamp).map((update) => (
                             <ActivityListItem
                                 key={update.eventType + '_' + update.upc + '_' + update.timestamp}
                                 event={update}

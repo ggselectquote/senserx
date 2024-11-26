@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import * as React from 'react';
-// import { useFacilityLayoutsQuery } from '../queries/useFacilityLayoutsQuery';
+import { useFacilityLayoutsQuery } from '../queries/useFacilityLayoutsQuery';
 import type { Facility, FacilityLayout, SenseShelf } from '../types/types';
 import LayoutListItem from './LayoutListItem';
 
@@ -75,21 +75,21 @@ const child4: FacilityLayout = {
 };
 
 const FacilityListItem = ({ facility }: { facility: Facility }) => {
-	// const { data: layouts } = useFacilityLayoutsQuery(facility.uid);
-	const layouts : FacilityLayout[] = [{
-		uid: "F1",
-		facilityId: "a",
-		name: "1st Floor",
-		type: "floor",
-		children: [child1, child2],
-	},
-	{
-		uid: "F1",
-		facilityId: "b",
-		name: "2nd Floor",
-        type: "floor",
-		children: [child3, child4],
-	}];
+	const { data: layouts } = useFacilityLayoutsQuery(facility.uid);
+	// const layouts : FacilityLayout[] = [{
+	// 	uid: "F1",
+	// 	facilityId: "a",
+	// 	name: "1st Floor",
+	// 	type: "floor",
+	// 	children: [child1, child2],
+	// },
+	// {
+	// 	uid: "F1",
+	// 	facilityId: "b",
+	// 	name: "2nd Floor",
+    //     type: "floor",
+	// 	children: [child3, child4],
+	// }];
 
 	return (
 		<Box
