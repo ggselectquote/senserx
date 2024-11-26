@@ -192,7 +192,7 @@ of the shelf, and then initiate the network connection from within the mobile ap
 when the shelf comes online, and the UI updates in real-time if the Pharmacist is currently viewing the
 facility layout in which the shelf has been added.
 
-<img src="__assets/EmptyShelves.png" alt="Alt text" width="189" height="400">   <img src="__assets/ShelfNetwork.png" alt="Alt text" width="189" height="400">   <img src="__assets/ShelfProvision.png" alt="Alt text" width="189" height="400">   <img src="__assets/ShelfOnline.png" alt="Alt text" width="189" height="400">  <img src="__assets/ShelfInventory.png" alt="Alt text" width="189" height="400">
+<img src="__assets/EmptyShelves.png" alt="Alt text" width="189" height="400">   <img src="__assets/ShelfNetwork.png" alt="Alt text" width="189" height="400">   <img src="__assets/PairShelf.png" alt="Alt text" width="189" height="400">   <img src="__assets/ShelfOnline.png" alt="Alt text" width="189" height="400">  <img src="__assets/ShelfInventory.png" alt="Alt text" width="189" height="400">
 
 ## Inventory Management
 
