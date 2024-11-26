@@ -118,6 +118,8 @@ The API and backend services can be started by running `docker-compose up --buil
 
 **This project requires Firebase.  [Sign-up For Firebase](https://console.firebase.google.com/).**
 
+Place your Firebase service account credentials in the root of the api directory, and place it in .`gitignore`.
+
 ## System Architecture:
 
 The solution consists of four components:
