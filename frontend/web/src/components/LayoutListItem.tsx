@@ -16,7 +16,7 @@ const LayoutListItem = ({ layout, childLevel }: { layout: FacilityLayout, childL
 		>
 			<Box
 			>
-				<Typography sx={{ fontWeight: nameFontWeight  }}>
+				<Typography sx={{ fontSize: 18, fontWeight: nameFontWeight  }}>
 					{layout.name}
 				</Typography>
 			</Box>
@@ -29,7 +29,7 @@ const LayoutListItem = ({ layout, childLevel }: { layout: FacilityLayout, childL
 				component='ul'
 			>
 				{layout.shelves && (
-					layout.shelves!.map((shelf) => (
+					layout.shelves.sort((a, b) => a.name.localeCompare(b.name))!.map((shelf) => (
 						<ShelfListItem
 							key={shelf.name + '_' + shelf.macAddress}
 							shelf={shelf}

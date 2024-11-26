@@ -102,12 +102,13 @@ const FacilityListItem = ({ facility }: { facility: Facility }) => {
 				sx={{
 				}}
 			>
-				<Typography variant="h5" sx={{  }}>
-					{facility.name} ({facility.contact})
+				<Typography variant="h5" sx={{ }}>
+					{facility.name}
 				</Typography>
 			</Box>
 			<Box
 				sx={{
+					mt: .5,
 					pl: 2,
 				}}
 				component='ul'

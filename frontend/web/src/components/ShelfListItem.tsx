@@ -28,26 +28,29 @@ const ShelfListItem = ({ shelf }: { shelf: SenseShelf }) => {
 			sx={{
 				mr: 1,
 				p: 1,
-				minWidth: 150,
+				width: 200,
+				minWidth: 200,
 				maxWidth: 250,
 				listStyle: 'none',
 			}}
 			component='li'
 			elevation={3}
 		>
-			<Typography sx={{  }}>
-				{shelf.name}&nbsp;
-				(<Typography sx={{color: 'green'}} component='span'>
-				Qty: {shelf.currentQuantity}
-			</Typography>)
+			<Typography sx={{ fontSize: 14, fontWeight: 800 }}>
+				{shelf.name}
 			</Typography>
-			<Typography sx={{fontSize: 14}}>
-				UPC: {shelf.currentUpc}
+			<Typography sx={{fontSize: 14, lineHeight: 1.7}}>
+				UPC {shelf.currentUpc ?? '(Empty)'}
+			</Typography>
+			<Typography sx={{color: 'green', fontSize: 14, lineHeight: 1.5}}>
+				Qty: {shelf.currentQuantity ?? 0}
 			</Typography>
 			
-			{product ? (
+			{product && (
 				<Box>
-					<Typography sx={{ fontSize: 14 }}>{product.brand}</Typography>
+					{/* <Tooltip title={ product.title } >
+						<Typography sx={{ fontSize: 14 }}>{product.brand}</Typography>
+					</Tooltip> */}
 					{product.images.length > 0 && (
 						<Box sx={{m:.5}}>
 							<img
@@ -59,13 +62,13 @@ const ShelfListItem = ({ shelf }: { shelf: SenseShelf }) => {
 							</Box>
 					)}
 					<Box>
-						{/* <Tooltip title={ product.description } sx={{color: '#333333'}}> */}
-							<Typography sx={{fontSize: 14}}>{ product.title }</Typography>
+						{/* <Tooltip title={ product.title } > */}
+							{/* <Typography sx={{fontSize: 14}}>{ product.title }</Typography> */}
 						{/* </Tooltip> */}
-						<Typography sx={{fontSize: 14}}>Weight: { product.weight }</Typography>
+						<Typography sx={{fontSize: 14, lineHeight: 1.5}}>{ product.title }</Typography>
 					</Box>
 				</Box>
-			) : 'Product not found'}
+			)}
 		</Paper>
 	);
 };
