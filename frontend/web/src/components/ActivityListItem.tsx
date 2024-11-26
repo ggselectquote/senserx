@@ -1,9 +1,15 @@
 import { Box, Typography } from '@mui/material';
 import * as React from 'react';
-import type { InventoryEvent } from '../types/types';
+import { useFacilityLayoutsQuery } from '../queries/useFacilityLayoutsQuery';
+import type { Facility, InventoryEvent } from '../types/types';
 import { DateTimeRenderer } from './DateTimeRenderer';
 
-const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
+const ActivityListItem = ({ event, facilities }: { event: InventoryEvent, facilities: Facility[] | undefined }) => {
+	const { data: layouts } = useFacilityLayoutsQuery(event.facilityId);
+
+	const facility = facilities?.find(f => f.uid == event.facilityId);
+	//const layout = layouts?.find(l => l.uid == facility?.layoutIds);
+
 	return (
 		<Box
 			sx={{
@@ -34,8 +40,8 @@ const ActivityListItem = ({ event }: { event: InventoryEvent }) => {
 			>
 				<Typography sx={{fontSize: 14, lineHeight: 1.5}}>
 					UPC: {event.upc} (<Typography component='span' sx={{color: 'green', fontSize: 14, lineHeight: 1.5}}>qty: {event.quantity}</Typography>)
-					<Typography component='span' sx={{ color: 'grey', fontSize: 14, lineHeight: 1.5}}>
-						, facility: {event.facilityId}, shelf: {event.shelfId}
+					<Typography component='span' sx={{ fontSize: 14, lineHeight: 1.5}}>
+						, {facility ? facility?.name : event.facilityId}, shelf: {event.shelfId} {event.isConfirmed ? '' : '(Not confirmed)'}
 					</Typography>
 				</Typography>
 			</Box>

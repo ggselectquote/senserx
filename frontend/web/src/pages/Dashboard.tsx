@@ -133,10 +133,12 @@ const Dashboard = () => {
                         p: 0,
                     }} component='ul'>
                     {updates && updates.events &&
-                        updates.events.sort(u => u.timestamp).map((update) => (
+                            updates.events.sort(u => u.timestamp).map((update) => (
+                                
                             <ActivityListItem
                                 key={update.eventType + '_' + update.upc + '_' + update.timestamp}
                                 event={update}
+                                facilities={facilities}
                             />
                         ))}
                     </Box>
