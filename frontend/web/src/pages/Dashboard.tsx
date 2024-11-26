@@ -4,7 +4,7 @@ import * as React from 'react';
 import ActivityListItem from '../components/ActivityListItem';
 import FacilityListItem from '../components/FacilityListItem';
 import { Toast } from '../components/Toast';
-import { setupNotifications } from '../firebase/firebaseConfig';
+import { setupNotifications } from '../firebase/firebase';
 import { useActivityQuery } from '../queries/useActivityQuery';
 import { useFacilitiesQuery } from '../queries/useFacilitiesQuery';
 
