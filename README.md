@@ -223,5 +223,8 @@ that the Pharmacist has dispensed the inventory at a specified quantity. If no "
 
 ## Inventory Monitoring
 
+Displays all facilities, layouts, and shelves with their current products and quantities.
 <img src="__assets/SenseRxWeb1.png" alt="Alt text" width="680" height="475">
+<br />
+Log when any shelf registers a 'receive' or 'dispense' event.
 <img src="__assets/SenseRxWeb2.png" alt="Alt text" width="680" height="475">
