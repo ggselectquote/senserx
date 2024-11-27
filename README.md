@@ -16,6 +16,12 @@ The SelectRX Pharmacy teams require a better understanding of their current inve
 
 We are designing a prototype technical implementation for physically tracking pharmaceutical inventory using a mobile application and smart-shelving units. Each smart-shelf is equipped with a force sense resistor, 10K Ohm resistor, and a WiFi-enabled microcontroller. For demonstration purposes, the prototype will utilize the UPC Item DB JSON API to fetch product details on supplement and OTC products.
 
+### Smart Shelves:
+
+The key hardware component for tracking inventory is the "Sense Shelf."  The Sense Shelf is a 3D printed model that fires a notification to key stakeholders to record inventory receive and dispense events for a Pharmacy.
+
+<img src="__assets/SmartShelves.jpg" alt="Alt text" width="680" height="420">
+
 ## Getting Started
 
 The monorepo is made up of 4 main software components:
