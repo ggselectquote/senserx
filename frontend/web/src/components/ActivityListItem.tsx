@@ -34,7 +34,7 @@ const ActivityListItem = ({ event, facilities }: { event: InventoryEvent, facili
 				<Typography sx={{ fontSize: 14, mr: 2, lineHeight: 1.7 }}>
 					{capitalize(event.eventType)} <Typography component='span' sx={{ fontSize: 14, lineHeight: 1.5}}>
 						from <strong>{facility ? facility?.name : event.facilityId}</strong>, <strong>{shelf ? shelf.name : event.shelfId}</strong>
-						<Typography component='span' sx={{fontSize: 14, color: '#888888'}}>&nbsp;{event.isConfirmed ? '' : '(Not confirmed)'}</Typography>
+						<Typography component='span' sx={{fontSize: 14, color: '#888888'}}>&nbsp;{event.isConfirmed ? '' : 'Shelf not confirmed'}</Typography>
 					</Typography>
 				</Typography>
 				<DateTimeRenderer
