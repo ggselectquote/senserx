@@ -129,7 +129,6 @@ The solution consists of four components:
 -  **Desktop GUI (Typescript)**
 -  **API Microservice (Typescript)**
 
-
 ### Smart Shelf (C)
 
 The smart shelf is the core hardware component of the system equipped with:
@@ -165,6 +164,9 @@ The API Microservice will act as the central data storage and processing hub.  T
 -  **Express**:  Provides endpoints for querying inventory data and the UPC Item DB.
 -  **MQTT**:  Manages communication between smart-shelf units and API
 -  **Firebase FCM**:  Relays push notifications between the API and the desktop and mobile applications
+
+
+<img src="__assets/SenseRxTechLayout.png" alt="Alt text" width="480" height="400">
 
 ## Facility Setup
 
