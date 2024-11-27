@@ -124,7 +124,9 @@ The API and backend services can be started by running `docker-compose up --buil
 
 **This project requires Firebase.  [Sign-up For Firebase](https://console.firebase.google.com/).**
 
-Place your Firebase service account credentials in the root of the api directory, and place it in .`gitignore`.
+Configure your Firebase credentials on the web and mobile clients.
+
+Place your Firebase service account credentials in the root of the api directory, and include it in `.gitignore`.
 
 ## System Architecture:
 
@@ -144,6 +146,7 @@ The smart shelf is the core hardware component of the system equipped with:
 -  **Change Events**:  The Smart Shelf records change events, including the delta between the current and last measurement.
 -  **Constant Communication:** The Smart Shelf phones home every minute to communicate the current voltage output applied to the sensor.
 
+The [bill of materials](backend/sense-shelf/device/SenseRx-Bill%20Of%20Materials.xlsx) for the prototype, and [STL 3D model](backend/sense-shelf/device/model/model.STL) are available in this repo.
 
 ### Mobile App (Flutter)
 
